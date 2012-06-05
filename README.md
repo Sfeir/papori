@@ -18,5 +18,6 @@ Important : For Ubuntu 64 bits users, open Terminal and execute the following li
 In some cases, you might need to follow additionnal steps (to be tested on a freshly installed Ubuntu) :
 
 - installing ia32/i386 libs
+
 	sudo apt-get install ia32-libs
 - following instructions at http://code.google.com/p/dart/wiki/PreparingYourMachine#Linux.
