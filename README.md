@@ -4,7 +4,8 @@ Papori
 Install Dart Editor
 ------------------------------------------------
 
-To install Dart Editor, follow instruction at ttp://www.dartlang.org/docs/editor/getting-started/.
+To install Dart Editor, follow instruction at http://www.dartlang.org/docs/editor/getting-started/.
+
 Important : For Ubuntu 64 bits users, open Terminal and execute the following lines :
 
 	wget https://launchpad.net/~jcollins/+archive/jaminppa/+build/1482994/+files/getlibs_2.06-0ubuntu1%7Eppa2_all.deb 
