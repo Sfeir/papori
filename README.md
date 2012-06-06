@@ -22,3 +22,10 @@ In some cases, you might need to follow additionnal steps (to be tested on a fre
 	sudo apt-get install ia32-libs
 	
 - following instructions at http://code.google.com/p/dart/wiki/PreparingYourMachine#Linux.
+
+
+Useful links :
+
+- 
+- Dart API Reference : http://api.dartlang.org/
+- Unit testing : http://api.dartlang.org/unittest.html
