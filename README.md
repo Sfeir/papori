@@ -23,9 +23,20 @@ In some cases, you might need to follow additionnal steps (to be tested on a fre
 	
 - following instructions at http://code.google.com/p/dart/wiki/PreparingYourMachine#Linux.
 
+Retrieve from git
+------------------------------------------------
+
+TODO
+
+Directories structure
+------------------------------------------------
+
+- dart : the workspace directory
+	- papori : the papori project
+- dart-editor : the dart editor directory
+	- ...
 
 Useful links :
 
-- 
 - Dart API Reference : http://api.dartlang.org/
 - Unit testing : http://api.dartlang.org/unittest.html
