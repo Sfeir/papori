@@ -1,6 +1,7 @@
 #library('JsonParserTest');
 
-#import('../../src/utils/JsonParser.dart');
+#import('../../src/data/UserTimeline.dart');
+#import('../../src/data/UserActivity.dart');
 #import('../../jsonObject/JsonObject.dart');
 #import('../../../../dart-editor/dart-sdk/lib/unittest/unittest.dart');
 
@@ -108,12 +109,20 @@ class JsonParserTest {
   
   run() {
     
-    test('Simple Json Parsing', () {
-      var parser = new JsonParser();
-      JsonObject result =  parser.parseTwitterJson(jsonSample);
+    test('Json Parsing', () {
+      JsonObject result = new JsonObject.fromJsonString(jsonSample);
       expect(result[0].id, equals(211056200366833660));
       expect(result[0].user.name, equals("LAU Thierry"));
       expect(result[0].entities.hashtags[0].text, equals("git"));
+    });
+    
+    test('Json Parsing with JsonObject', () {
+      UserTimeline userTimeline = new JsonObject.fromJsonString(jsonSample);
+      //TODO failing here : working on progress ....
+      List<UserActivity> userActivities = userTimeline.userActivities;
+      expect(userActivities.length, equals(4));
+      expect(userActivities[0].id, equals(211056200366833660));
+      expect(userActivities[0].created_at, equals("Fri Jun 08 11:24:54 +0000 2012"));
     });
     
 }
