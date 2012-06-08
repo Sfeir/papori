@@ -9,8 +9,8 @@ class TwitterAdapterTest implements Runnable {
   run() {
     test('testConnection', () {
       var adapter = new TwitterAdapter();
-      // TODO : à faire tourner sur le serveur Papori
-//      adapter.twitterApiUrl = "http://${window.location.host}/twitter";
+      // à faire tourner sur le serveur Papori
+      adapter.twitterApiUrl = "http://${window.location.host}/twitter";
 
       var callback = expectAsync1((result) {
         print(result);
