@@ -7,6 +7,7 @@
 
 #import('./FirstTest.dart');
 #import('./adapter/TwitterAdapterTest.dart');
+#import('./parser/JsonParserTest.dart');
 
 /**
 * Run the tests suite
@@ -17,6 +18,7 @@ class TestSuite {
   TestSuite() : _tests = [
                           new FirstTest(), 
                           new TwitterAdapterTest(),
+                          new JsonParserTest()
                           ];
   
   void run() {
