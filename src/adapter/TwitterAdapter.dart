@@ -17,18 +17,15 @@ class TwitterAdapter {
   */
   testConnection(onSuccess(bool result)) {
     var url = "$_twitterApiUrl$_TEST_URL"; 
-    print("URL: $url\n");
+    print("GET - $url");
 
     // call the web server asynchronously 
     var request = new XMLHttpRequest.get(url, onRequestSuccess(XMLHttpRequest req) {
-      print("RESPONSE: ${req.status} - ${req.responseText}\n");
-      onSuccess(req.status == 200 && req.responseText == """ok""");
+      print("${req.status} - $_TEST_URL - ${req.responseText}");
+      onSuccess(req.responseText == "\"ok\"");
     });
   }
   
-  void main() {
-    testConnection((result) => print(result));
-  }
-
+  String get twitterApiUrl() => _twitterApiUrl;
   set twitterApiUrl(String value) => _twitterApiUrl = value;
 }
