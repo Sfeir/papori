@@ -1,3 +1,5 @@
+#library('server');
+
 #import('dart:io');
 
 /**
@@ -17,8 +19,9 @@ class PaporiServer extends Object {
   String _rootPath;
   String _sdkPath;
   String _packagesPath;
-  String _twitterApiUrl = "api.twitter.com";
+  String _twitterApiUrl = 'api.twitter.com';
   int _twitterApiPort = 80;
+  List<String> _indexFiles = const ['index.html'];
   
   PaporiServer(String host, int port, [String rootPath = '.']) 
   : 
@@ -27,7 +30,7 @@ class PaporiServer extends Object {
     this._port = port, 
     this._rootPath = rootPath,
     this._sdkPath = '.'
-    {
+  {
   }
   
   /**
@@ -113,13 +116,20 @@ class PaporiServer extends Object {
   _fileResponse(HttpRequest request, HttpResponse response, String filePath){
     _exceptionHandler(request, response, () {
       File requestedFile = new File(filePath);
+      if(filePath.endsWith('/')){
+        var filesIterator = _indexFiles.map((indexFile) => new File("$filePath$indexFile")).filter((file) => file.existsSync()).iterator();
+        if(filesIterator.hasNext()){
+          requestedFile = filesIterator.next();
+        }
+      }
+
       if(requestedFile.existsSync()){
         response.statusCode = 200;
         response.outputStream.write(requestedFile.readAsBytesSync());
-      }else {
+      } else {
         response.statusCode = 404;
       }
-      print("${response.statusCode} - ${request.path} - ${filePath}");
+      print("${response.statusCode} - ${request.path} - ${requestedFile.fullPathSync()}");
       response.outputStream.close();
     });
   }
@@ -140,10 +150,3 @@ class PaporiServer extends Object {
   set sdkPath(String value) => _sdkPath = value;
   set packagesPath(String value) => _packagesPath = value;
 }
-
-main() {
-  var server = new PaporiServer('127.0.0.1', 8080);
-  server.sdkPath = "../..";
-  server.packagesPath = "./packages";
-  server.start();
-}  

@@ -1,4 +1,4 @@
 dependencies:
-  JsonObject:
+  jsonObject:
     git: git://github.com/chrisbu/dartwatch-JsonObject
 
