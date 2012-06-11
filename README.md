@@ -59,13 +59,32 @@ Development Tools
 
 Generate Dart code from Template
 ------------------------------------------------
+Pre-requises :
+- having SVN installed
+- having dart SDK installed (we assume next that {dart-sdk} folder is where it is installed)
 
-TODO
+Preparation :
+1. Run <code>svn checkout http://dart.googlecode.com/svn/branches/bleeding_edge/dart/utils</code> in the {dart-sdk}/lib folder
+2. Make sure that {dart-sdk}/bin is in your environnement path
+	For Ubuntu user, goto ~/Home/.profile (hidden file) end add the following lines at the end of the file : <code>PATH="$PATH:$HOME/Work/tools/dart-editor/dart-sdk/bin"</code>
+3. Make sure that {dart-sdk}/lib/utils/template is in your environnement path
+	For Ubuntu user, goto ~/Home/.profile (hidden file) end add the following lines at the end of the file : <code>PATH="$PATH:$HOME/Work/tools/dart-editor/dart-sdk/lib/utils/template"</code>
+
+Compilation :
+1. Create a template file with .tmpl extension (i.e. myTemplate.tmpl)
+2. With a terminal, go to the folder where the template file is
+3. Run the following command : <code>template myTemplate.tmpl</code>
+4. The dart file will be generated in the same folder.
+
+Useful link :
+http://blog.sethladd.com/2012/03/first-look-at-darts-html-template.html
+http://japhr.blogspot.fr/2012/03/dart-templates-bleeding-edge.html
+
 
 Use pub : the Dart Package Manager
 ------------------------------------------------
 Open a terminal, and change the current directory to the papory project directory, "dart/papori".
-> 	$DART_SDK/bin/pub install
+> 	$DART_SDK/bin/pub install is in your environnement path
 
 
 Useful links :
