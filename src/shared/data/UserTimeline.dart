@@ -1,5 +1,5 @@
 #library("UserTimeline");
-#import('package:jsonObject/JsonObject.dart');
+#import('package:dartwatch-JsonObject/JsonObject.dart');
 #import('UserActivity.dart');
 
 interface UserTimeline extends JsonObject {

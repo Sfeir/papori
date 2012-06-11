@@ -1,6 +1,7 @@
 #library('server');
 
 #import('dart:io');
+#import('package:log4dart/Lib.dart');
 
 /**
 * Serveur simple pour l'application.
@@ -8,7 +9,9 @@
 * Pour les requêtes commençant pas /twitter/, elles sont redirigées sur le serveur twitter puis le résultat est retourné.
 * Pour les requêtes commençant pas /dart-editor/, elles sont redirigées sur les fichiers du SDK (pour les tests)
 */
-class PaporiServer extends Object {
+class PaporiServer {
+  final Logger _logger;
+  
   static final String _TWEETER_PATH_PREFIX = '/twitter';
   static final String _DART_EDITOR_PATH_PREFIX = '/dart-editor';
   static final String _PACKAGES_PATH_PREFIX = '/test/packages';
@@ -23,8 +26,11 @@ class PaporiServer extends Object {
   int _twitterApiPort = 80;
   List<String> _indexFiles = const ['index.html'];
   
-  PaporiServer(String host, int port, [String rootPath = '.']) 
+  PaporiServer() : _logger = LoggerFactory.getLogger("PaporiServer");
+  
+  PaporiServer.get(String host, int port, [String rootPath = '.']) 
   : 
+    _logger = LoggerFactory.getLogger("PaporiServer"),
     _server = new HttpServer(), 
     this._host = host, 
     this._port = port, 
@@ -71,7 +77,7 @@ class PaporiServer extends Object {
   _twitterHandler(HttpRequest request, HttpResponse response){
     _exceptionHandler(request, response, () {
       var path = request.path.substring(_TWEETER_PATH_PREFIX.length);
-      print("${request.method} - http://$_twitterApiUrl$path");
+      _logger.info("${request.method} - http://$_twitterApiUrl$path");
   
       // TODO : améliorer cette partie en recopiant les entêtes, cookies, ... principe d'un reverse proxy
       var twitterClient = new HttpClient().open(request.method, _twitterApiUrl, _twitterApiPort, path);
@@ -129,7 +135,7 @@ class PaporiServer extends Object {
       } else {
         response.statusCode = 404;
       }
-      print("${response.statusCode} - ${request.path} - ${requestedFile.fullPathSync()}");
+      _logger.info("${response.statusCode} - ${request.path} - ${requestedFile.fullPathSync()}");
       response.outputStream.close();
     });
   }
@@ -139,7 +145,7 @@ class PaporiServer extends Object {
       unsafeRun();
     }
     catch(Exception e){
-      print("500 - ${request.path} - ${e.toString()}");
+      _logger.error("500 - ${request.path} - ${e.toString()}");
       response.statusCode = 500;
       response.outputStream.close();
     }
