@@ -1,6 +1,6 @@
 #import('dart:html');
-#import('src/adapter/TwitterAdapter.dart');
-#source('src/template/Alert.dart');
+#import('src/client/adapter/TwitterAdapter.dart');
+#source('src/client/template/Alert.dart');
 
 void main() {
   show('Hello, World!');

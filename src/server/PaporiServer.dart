@@ -9,12 +9,14 @@
 class PaporiServer extends Object {
   static final String _TWEETER_PATH_PREFIX = '/twitter';
   static final String _DART_EDITOR_PATH_PREFIX = '/dart-editor';
+  static final String _PACKAGES_PATH_PREFIX = '/test/packages';
   
   HttpServer _server;
   String _host;
   int _port;
   String _rootPath;
   String _sdkPath;
+  String _packagesPath;
   String _twitterApiUrl = "api.twitter.com";
   int _twitterApiPort = 80;
   
@@ -36,6 +38,7 @@ class PaporiServer extends Object {
     _server.defaultRequestHandler = _staticResquestHandler;
     _server.addRequestHandler(_twitterMatcher, _twitterHandler);
     _server.addRequestHandler(_dartEditorMatcher, _dartEditorHandler);
+    _server.addRequestHandler(_packagesMatcher, _packagesHandler);
   }
   
   /**
@@ -50,23 +53,6 @@ class PaporiServer extends Object {
   */
   _staticResquestHandler(HttpRequest request, HttpResponse response) {
     _fileResponse(request, response, "$_rootPath${request.path}");
-  }
-  
-  /**
-  * Renvoit les données du fichier passé en paramétre
-  */
-  _fileResponse(HttpRequest request, HttpResponse response, String filePath){
-    _exceptionHandler(request, response, () {
-      File requestedFile = new File(filePath);
-      if(requestedFile.existsSync()){
-        response.statusCode = 200;
-        response.outputStream.write(requestedFile.readAsBytesSync());
-      }else {
-        response.statusCode = 404;
-      }
-      print("${response.statusCode} - ${request.path}");
-      response.outputStream.close();
-    });
   }
   
   /**
@@ -105,6 +91,38 @@ class PaporiServer extends Object {
   _dartEditorHandler(HttpRequest request, HttpResponse response){
     _fileResponse(request, response, "$_sdkPath${request.path}");
   }
+  
+  /**
+  * Règle de matching pour les requêtes de test commençant par /test/packages/
+  */
+  bool _packagesMatcher(HttpRequest request){
+    return request.path.startsWith("$_PACKAGES_PATH_PREFIX/");
+  }
+  
+  /**
+  * Traitement des requêtes "Twitter".
+  */
+  _packagesHandler(HttpRequest request, HttpResponse response){
+    var path = request.path.substring(_PACKAGES_PATH_PREFIX.length);
+    _fileResponse(request, response, "$_packagesPath$path");
+  }
+  
+  /**
+  * Renvoit les données du fichier passé en paramétre
+  */
+  _fileResponse(HttpRequest request, HttpResponse response, String filePath){
+    _exceptionHandler(request, response, () {
+      File requestedFile = new File(filePath);
+      if(requestedFile.existsSync()){
+        response.statusCode = 200;
+        response.outputStream.write(requestedFile.readAsBytesSync());
+      }else {
+        response.statusCode = 404;
+      }
+      print("${response.statusCode} - ${request.path} - ${filePath}");
+      response.outputStream.close();
+    });
+  }
 
   _exceptionHandler(HttpRequest request, HttpResponse response, unsafeRun()){
     try{
@@ -120,10 +138,12 @@ class PaporiServer extends Object {
   set twitterApiUrl(String value) => _twitterApiUrl = value;
   set twitterApiPort(int value) => _twitterApiPort = value;
   set sdkPath(String value) => _sdkPath = value;
+  set packagesPath(String value) => _packagesPath = value;
 }
 
 main() {
   var server = new PaporiServer('127.0.0.1', 8080);
   server.sdkPath = "../..";
+  server.packagesPath = "./packages";
   server.start();
 }  
