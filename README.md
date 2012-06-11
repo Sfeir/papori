@@ -80,8 +80,8 @@ Compilation :
 4. The dart file will be generated in the same folder.
 
 Useful link :
-http://blog.sethladd.com/2012/03/first-look-at-darts-html-template.html
-http://japhr.blogspot.fr/2012/03/dart-templates-bleeding-edge.html
+* http://blog.sethladd.com/2012/03/first-look-at-darts-html-template.html
+* http://japhr.blogspot.fr/2012/03/dart-templates-bleeding-edge.html
 
 
 Use pub : the Dart Package Manager
