@@ -5,9 +5,8 @@
 #import('../../../dart-editor/dart-sdk/lib/unittest/html_config.dart');
 #import('./Runnable.dart');
 
-#import('./FirstTest.dart');
-#import('./adapter/TwitterAdapterTest.dart');
-#import('./parser/JsonParserTest.dart');
+#import('./client/adapter/TwitterAdapterTest.dart');
+#import('./shared/parser/JsonParserTest.dart');
 
 /**
 * Run the tests suite
@@ -16,7 +15,6 @@ class TestSuite {
   final Collection<Runnable> _tests;
   
   TestSuite() : _tests = [
-                          new FirstTest(), 
                           new TwitterAdapterTest(),
                           new JsonParserTest()
                           ];
