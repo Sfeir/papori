@@ -3,19 +3,22 @@
 #source('src/client/template/Alert.dart');
 
 void main() {
-  show('Hello, World!');
-  displayAlert();
+  displayDartStatus();
   displayTwitterTestButton();
 }
 
-void show(String message) {
-  document.query('#status').innerHTML = message;
-
+void displayDartStatus() {
+  document.query('#status').innerHTML = "Papori <span class=\"label label-success\">Dart is running</span>";
 }
 
-void displayAlert(){
+/**
+ * @param header alert header
+ * @param message alert message
+ * @param alertType "alert-success", "alert-error", "alert-info"
+ */
+void displayAlert(String header, String message, String alertType){
   // Instantiation du widget Alert
-  Alert alert = new Alert("Note", "Ceci est widget créé par template!", "alert-success");
+  Alert alert = new Alert(header, message, alertType);
   
   // Ajout du widget Alert dans l'élément d'id container
   var e1 = new Element.html(alert.root.outerHTML);
@@ -26,11 +29,12 @@ void displayTwitterTestButton(){
   // Ajout d'un bouton de test Twitter
   var button = new ButtonElement();
   button.text = "Twitter Test";
+  button.attributes['class'] = "btn btn-primary";
   button.on.click.add((Event event) {
     TwitterAdapter adapter = new TwitterAdapter();
     adapter.twitterApiUrl = "http://${window.location.host}/twitter";
     print("Twitter Url : ${adapter.twitterApiUrl}");
-    adapter.testConnection((result) => window.alert(result ? "Succeeded" : "FAILED"));
+    adapter.testConnection((result) => displayAlert("Response", result ? "Succeeded" : "FAILED", result ? "alert-success" : "alert-error"));
   });
   document.query("#container").elements.add(button);
 }
