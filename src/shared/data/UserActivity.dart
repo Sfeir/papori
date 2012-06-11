@@ -1,5 +1,5 @@
 #library("UserActivity");
-#import('package:jsonObject/JsonObject.dart');
+#import('package:dartwatch-JsonObject/JsonObject.dart');
 
 interface UserActivity extends JsonObject {
   

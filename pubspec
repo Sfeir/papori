@@ -1,0 +1,7 @@
+dependencies:
+  jsonObject:
+  	# Careful : a patch was done locally on line 14 of JsonObject.dart :   var _objectData;
+    git: git://github.com/chrisbu/dartwatch-JsonObject
+  log4dart:
+    git: git://github.com/Qalqo/log4dart
+
