@@ -1,6 +1,6 @@
 #library('JsonParserTest');
 
-#import('package:jsonObject/JsonObject.dart');
+#import('package:dartwatch-JsonObject/JsonObject.dart');
 #import('../../../../../dart-editor/dart-sdk/lib/unittest/unittest.dart');
 
 class JsonParserTest {

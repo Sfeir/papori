@@ -47,7 +47,7 @@ Configure your environnement
 Set the DART_SDK variable to the dart SDK path :
 > 	DART_SDK=~/dart-editor/dart-sdk
 
-In the dart Editor, set the package directory : "Tools" > "Preferences" > "Editor" and in "Package directory" browse to ~/dart/papori/packages
+In the dart Editor, set the package directory : "Tools" > "Preferences" > "Editor" and in "Package directory" browse to ~/dart/papori/packages/
 
 Run the application
 ------------------------------------------------
@@ -81,6 +81,7 @@ Compilation :
 
 Useful link :
 * http://blog.sethladd.com/2012/03/first-look-at-darts-html-template.html
+* http://blog.sethladd.com/2012/03/dart-templates-now-allow-nesting.html
 * http://japhr.blogspot.fr/2012/03/dart-templates-bleeding-edge.html
 
 

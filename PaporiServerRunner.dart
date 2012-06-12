@@ -1,15 +1,18 @@
 #import('dart:io');
 #import("./src/server/PaporiServer.dart");
+#import('package:log4dart/Lib.dart');
 
 main() {
+  var _logger = LoggerFactory.getLogger("main");
+  
   var servername = 'Papori';
   var host = '127.0.0.1';
   var port = 8080;
   
-  print("Starting $servername server on $host:$port ...");
-  var server = new PaporiServer(host, port);
+  _logger.info("Starting $servername server on $host:$port ...");
+  var server = new PaporiServer.get(host, port);
   server.sdkPath = "../..";
   server.packagesPath = "./packages";
   server.start();
-  print("$servername server is running on : http://$host:$port"); 
+  _logger.info("$servername server is running on : http://$host:$port"); 
 }
