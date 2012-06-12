@@ -81,6 +81,7 @@ Compilation :
 
 Useful link :
 * http://blog.sethladd.com/2012/03/first-look-at-darts-html-template.html
+* http://blog.sethladd.com/2012/03/dart-templates-now-allow-nesting.html
 * http://japhr.blogspot.fr/2012/03/dart-templates-bleeding-edge.html
 
 
