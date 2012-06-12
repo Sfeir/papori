@@ -1,0 +1,32 @@
+template Dashboard(var users){
+	
+	css{
+		.header{
+			font-weight:bold;
+		}
+	}
+
+	<div class="row">
+		<div class="span12">
+		<table class="table table-striped">
+	        <thead>
+	          <tr>
+	            <td class="header">User</td>
+	            <td class="header">New tweets</td>
+	            <td class="header">Last updated</td>
+	          </tr>
+	        </thead>
+	        <tbody>
+	          ${#each users user}
+		          <tr>
+		            <td>${user.displayName}</td>
+		            <td>${user.newTweetCount}</td>
+		            <td>${user.lastUpdateDate}</td>
+		            <td><button class="btn"><i class="icon-refresh"></i></button></td>
+		          </tr>
+			  ${/each}
+	        </tbody>
+	      </table>
+	      </div>
+     </div>
+}

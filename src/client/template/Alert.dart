@@ -3,16 +3,21 @@
 
 class Alert {
   Map<String, Object> _scopes;
+  
+  // sthis is what your template hangs off of. This never touches the DOM.
   Element _fragment;
 
   String header;
   String message;
   String type;
 
+  // this name comes from the template
   Alert(this.header, this.message, this.type) : _scopes = new Map<String, Object>() {
     // Insure stylesheet for template exist in the document.
+    // templates can inject stylesheets. Example to follow.
     add_Alert_templatesStyles();
 
+    // here's the template! Notice the string interpolation
     _fragment = new DocumentFragment();
     var e0 = new Element.html('<div class="alert ${type}"></div>');
     _fragment.elements.add(e0);
@@ -24,6 +29,8 @@ class Alert {
     e0.elements.add(e3);
   }
 
+  // how to access the nodes from the template.
+  // Still not attached to DOM.
   Element get root() => _fragment;
 
   // Injection functions:
@@ -40,6 +47,7 @@ class Alert {
   // With functions:
 
   // CSS for this template.
+  // our template didn't define any CSS, so this is empty
   static final String stylesheet = "";
   String safeHTML(String html) {
     // TODO(terry): Escaping for XSS vulnerabilities TBD.
