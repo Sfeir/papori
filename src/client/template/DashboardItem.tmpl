@@ -1,8 +1,18 @@
 template DashboardItem(var user){
+
+css{
+	.delete{
+		margin-left:12px;
+	}
 	
-      <tr>
+	.delete:hover{
+		cursor:pointer;
+	}
+}
+      <tr id="item${user.displayName}">
         <td>${user.displayName}</td>
         <td>${user.newTweetCount}</td>
         <td>${user.lastUpdateDate}</td>
+        <td><div id="delete${user.displayName}"><i class="icon-remove delete"></i></div></td>
       </tr>
 }

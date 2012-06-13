@@ -90,6 +90,10 @@ class PaporiServer {
     });
   }
   
+  /*****************************************************
+   *          PAPORI MATCHER & HANDLER                 *
+   *****************************************************/
+  
   bool _paporiMatcher(HttpRequest request){
     return request.path.startsWith("$_PAPORI_PATH_PREFIX/");
   }

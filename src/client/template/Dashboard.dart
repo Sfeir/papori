@@ -26,8 +26,10 @@ class Dashboard {
     e4.elements.add(e6);
     var e7 = new Element.html('<td class="header">Last updated</td>');
     e4.elements.add(e7);
-    var e8 = new Element.html('<tbody id="dashboard-body"></tbody>');
-    e2.elements.add(e8);
+    var e8 = new Element.html('<td class="header">Delete</td>');
+    e4.elements.add(e8);
+    var e9 = new Element.html('<tbody id="dashboard-body"></tbody>');
+    e2.elements.add(e9);
   }
 
   Element get root() => _fragment;

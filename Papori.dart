@@ -106,8 +106,12 @@ class Papori {
       UserToFollow user = new UserToFollow();
       user.displayName = userToFollow;
       user.newTweetCount = 15;
+      user.id = "44864846";
       user.lastUpdateDate = "17/05/2012 14:50:20";
       _addUserToFollowInDashboard(user);
+      document.query("#delete${user.displayName}").on.click.add((Event event2){
+        document.query("#item${user.displayName}").remove();
+      });
     });
     form.elements.add(searchField);
     form.elements.add(followButton);
