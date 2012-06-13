@@ -4,6 +4,7 @@
 #import('src/shared/data/UserToFollow.dart');
 #source('src/client/template/Alert.dart');
 #source('src/client/template/Dashboard.dart');
+#source('src/client/template/DashboardItem.dart');
 
 class Papori {
   final Logger _logger;
@@ -12,30 +13,22 @@ class Papori {
   
   void display(){
     _displayDartStatus();
+    _displayFollowBlock();
     _displayTwitterTestButton();
-	UserToFollow user1 = new UserToFollow();
-	user1.displayName = "Thierry Lau";
-	user1.lastUpdateDate = "28/03/2012 15:52:07";
-	user1.newTweetCount = 5;
-	
-	UserToFollow user2 = new UserToFollow();
-	user2.displayName = "Guillaume Girou";
-	user2.lastUpdateDate = "27/10/2012 17:58:47";
-	user2.newTweetCount = 12;
-	
-	UserToFollow user3 = new UserToFollow();
-	user3.displayName = "Didier Girard";
-	user3.lastUpdateDate = "15/01/2012 15:55:24";
-	user3.newTweetCount = 40;
-	
-	var usersToFollow = new List<UserToFollow>();
-	usersToFollow.addAll([user1, user2, user3]);
-	
-	_displayDashboard(usersToFollow);
+    _displayPaporiTestButton();
+    _displayDashboard();
   }
   
   void _displayDartStatus() {
     document.query('#status').innerHTML = "Papori <span class=\"label label-success\">Dart is running</span>";
+  }
+  
+  _checkForNewTwitterActivities(){
+    var url = "http://${window.location.host}/papori/";
+    
+    var request = new XMLHttpRequest.get(url, onRequestSuccess(XMLHttpRequest req) {
+      _displayAlert("Papori result", req.responseText, "alert-success");
+    });
   }
   
 	/**
@@ -53,8 +46,8 @@ class Papori {
 	  document.query("#container").elements.add(alertElement);
 	}
 
-	void _displayDashboard(var usersToFollow){
-	   Dashboard dashboard = new Dashboard(usersToFollow);
+	void _displayDashboard(){
+	   Dashboard dashboard = new Dashboard();
 	   var dashboardElement = new Element.html(dashboard.root.outerHTML);
 	   document.query("#container").elements.add(dashboardElement);
 	}
@@ -64,14 +57,70 @@ class Papori {
     var button = new ButtonElement();
     button.text = "Twitter Test";
     button.attributes['class'] = "btn btn-primary";
+    button.style.margin = "10px";
     button.on.click.add((Event event) {
       TwitterAdapter adapter = new TwitterAdapter();
       adapter.twitterApiUrl = "http://${window.location.host}/twitter";
       _logger.info("Twitter Url : ${adapter.twitterApiUrl}");
       adapter.testConnection((result) => _displayAlert("Response", result ? "Succeeded" : "FAILED", result ? "alert-success" : "alert-error"));
     });
-    document.query("#container").elements.add(button);
+    document.query("#content").elements.add(button);
   }
+  
+  void _displayPaporiTestButton(){
+    // Ajout d'un bouton de test Twitter
+    var button = new ButtonElement();
+    var intervalConsumerId;
+    button.text = "Check for new tweets periodically";
+    button.attributes['class'] = "btn btn-success";
+    button.on.click.add((Event event) {
+      // if the user start the cron ...
+      if(button.attributes['class'] == "btn btn-success"){
+        button.text = "Stop checking for new tweets";
+        button.attributes['class'] = "btn btn-danger";
+        intervalConsumerId = window.setInterval(_checkForNewTwitterActivities, 1000);
+      } else {
+        button.text = "Check for new tweets periodically";
+        button.attributes['class'] = "btn btn-success";
+        window.clearInterval(intervalConsumerId);
+      }
+      
+    });
+    document.query("#content").elements.add(button);
+    
+  }
+  
+  void _displayFollowBlock(){
+    DivElement form = new DivElement();
+    form.attributes['class'] = "well form-search";
+    ButtonElement followButton = new ButtonElement();
+    followButton.text = "Suivre";
+    followButton.attributes['type'] = "submit";
+    followButton.attributes['class'] = "btn btn-info";
+    InputElement searchField = new InputElement("text");
+    searchField.attributes['class'] = "input-large search-query";
+    searchField.style.marginRight = "5px";
+    followButton.on.click.add((Event event){
+      // TODO add userToFollow in the table
+      var userToFollow = searchField.value;
+      UserToFollow user = new UserToFollow();
+      user.displayName = userToFollow;
+      user.newTweetCount = 15;
+      user.lastUpdateDate = "17/05/2012 14:50:20";
+      _addUserToFollowInDashboard(user);
+    });
+    form.elements.add(searchField);
+    form.elements.add(followButton);
+    
+    document.query("#container").elements.add(form);
+  }
+  
+  void _addUserToFollowInDashboard(UserToFollow user){
+    DashboardItem dashboardElement = new DashboardItem(user);
+    var dashboardItemElement = new Element.html(dashboardElement.root.outerHTML);
+    document.query("#dashboard-body").elements.add(dashboardItemElement);
+  }
+  
 }
 
 void main() {

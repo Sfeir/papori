@@ -1,6 +1,7 @@
 #library('server');
 
 #import('dart:io');
+#import('dart:json');
 #import('package:log4dart/Lib.dart');
 
 /**
@@ -13,6 +14,7 @@ class PaporiServer {
   final Logger _logger;
   
   static final String _TWEETER_PATH_PREFIX = '/twitter';
+  static final String _PAPORI_PATH_PREFIX = '/papori';
   static final String _DART_EDITOR_PATH_PREFIX = '/dart-editor';
   static final String _PACKAGES_PATH_PREFIX = '/test/packages';
   
@@ -46,6 +48,7 @@ class PaporiServer {
     _server.listen(_host, _port);
     _server.defaultRequestHandler = _staticResquestHandler;
     _server.addRequestHandler(_twitterMatcher, _twitterHandler);
+    _server.addRequestHandler(_paporiMatcher, _paporiHandler);
     _server.addRequestHandler(_dartEditorMatcher, _dartEditorHandler);
     _server.addRequestHandler(_packagesMatcher, _packagesHandler);
   }
@@ -84,6 +87,21 @@ class PaporiServer {
       twitterClient.onResponse = (HttpClientResponse twitterResponse){
         twitterResponse.inputStream.pipe(response.outputStream, true);
       };
+    });
+  }
+  
+  bool _paporiMatcher(HttpRequest request){
+    return request.path.startsWith("$_PAPORI_PATH_PREFIX/");
+  }
+  
+  _paporiHandler(HttpRequest request, HttpResponse response){
+    _exceptionHandler(request, response, () {
+      Map data = new Map(); // create a map for the response
+      print("Request for ${request.path}");
+      data["get"] = request.path; // add the path to the data
+      String responseData = JSON.stringify(data); // convert the map to JSON
+      response.outputStream.writeString(responseData); // send the data back to the client
+      response.outputStream.close(); // close the response
     });
   }
   

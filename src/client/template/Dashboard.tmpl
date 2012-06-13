@@ -1,4 +1,4 @@
-template Dashboard(var users){
+template Dashboard(){
 	
 	css{
 		.header{
@@ -16,15 +16,7 @@ template Dashboard(var users){
 	            <td class="header">Last updated</td>
 	          </tr>
 	        </thead>
-	        <tbody>
-	          ${#each users user}
-		          <tr>
-		            <td>${user.displayName}</td>
-		            <td>${user.newTweetCount}</td>
-		            <td>${user.lastUpdateDate}</td>
-		            <td><button class="btn"><i class="icon-refresh"></i></button></td>
-		          </tr>
-			  ${/each}
+	        <tbody id="dashboard-body">
 	        </tbody>
 	      </table>
 	      </div>
