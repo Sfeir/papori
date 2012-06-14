@@ -1,6 +1,7 @@
 #library('server');
 
 #import('dart:io');
+#import('dart:uri');
 #import('dart:json');
 #import('package:log4dart/Lib.dart');
 
@@ -80,13 +81,10 @@ class PaporiServer {
   _twitterHandler(HttpRequest request, HttpResponse response){
     _exceptionHandler(request, response, () {
       var path = request.path.substring(_TWEETER_PATH_PREFIX.length);
-      _logger.info("${request.method} - http://$_twitterApiUrl$path");
+      _logger.debug("${request.method} - http://$_twitterApiUrl$path");
   
-      // TODO : améliorer cette partie en recopiant les entêtes, cookies, ... principe d'un reverse proxy
-      var twitterClient = new HttpClient().open(request.method, _twitterApiUrl, _twitterApiPort, path);
-      twitterClient.onResponse = (HttpClientResponse twitterResponse){
-        twitterResponse.inputStream.pipe(response.outputStream, true);
-      };
+      HttpClientConnection client = new HttpClient().open(request.method, _twitterApiUrl, _twitterApiPort, path);
+      _proxify(request, response, client);
     });
   }
   
@@ -144,6 +142,8 @@ class PaporiServer {
   _fileResponse(HttpRequest request, HttpResponse response, String filePath){
     _exceptionHandler(request, response, () {
       File requestedFile = new File(filePath);
+
+      // Recherche d'une page index si l'url se termine par un /
       if(filePath.endsWith('/')){
         var filesIterator = _indexFiles.map((indexFile) => new File("$filePath$indexFile")).filter((file) => file.existsSync()).iterator();
         if(filesIterator.hasNext()){
@@ -151,26 +151,85 @@ class PaporiServer {
         }
       }
 
+      // On vérifie si le fichier existe
       if(requestedFile.existsSync()){
         response.statusCode = 200;
-        response.outputStream.write(requestedFile.readAsBytesSync());
+        requestedFile.openInputStream().pipe(response.outputStream, true);
+        _logger.debug("${response.statusCode} - ${request.path} - ${requestedFile.fullPathSync()}");
       } else {
         response.statusCode = 404;
+        response.outputStream.close();
+        _logger.debug("${response.statusCode} - ${request.path}}");
       }
-      _logger.info("${response.statusCode} - ${request.path} - ${requestedFile.fullPathSync()}");
-      response.outputStream.close();
     });
   }
 
+  /**
+  * Récupère les exceptions lancés par la fonction unsafeRun et retourne une erreur 500 s'il y a.
+  */
   _exceptionHandler(HttpRequest request, HttpResponse response, unsafeRun()){
     try{
       unsafeRun();
     }
     catch(Exception e){
-      _logger.error("500 - ${request.path} - ${e.toString()}");
+      _logger.error("500 - ${request.path} - $e");
       response.statusCode = 500;
       response.outputStream.close();
     }
+  }
+  
+  /**
+  * Redirige la requête vers une connexion ouverte et redirige la réponse de celle-ci
+  */
+  _proxify(HttpRequest request, HttpResponse response, HttpClientConnection client){
+    client.onRequest = (HttpClientRequest clientRequest) {
+//        print("-------------request----------------");
+//        print("HEADERS : \n${request.headers}");
+//        print("contentLength : ${request.contentLength}");
+//        print("------------------------------------");
+      
+      request.headers.forEach((String name, List<String> values) => ['host'].every((n) => n != name) ?  values.forEach((value) => clientRequest.headers.add(name, value)) : '');
+      clientRequest.contentLength = request.contentLength;
+
+//      print("-----------clientRequest------------");
+//      print("HEADERS : \n${clientRequest.headers}");
+//      print("contentLength : ${clientRequest.contentLength}");
+//      print("------------------------------------");
+
+      if(request.contentLength > 0){
+        request.inputStream.pipe(clientRequest.outputStream, true);
+      } else {
+        clientRequest.outputStream.close();
+      }
+    };
+    client.onResponse = (HttpClientResponse clientResponse){
+      _exceptionHandler(request, response, () {
+//        print("-----------clientResponse-----------");
+//        print("HEADERS : \n${clientResponse.headers}");
+//        print("contentLength : ${clientResponse.contentLength}");
+//        print("reasonPhrase : ${clientResponse.reasonPhrase}");
+//        print("statusCode : ${clientResponse.statusCode}");
+//        print("------------------------------------");
+        
+        clientResponse.headers.forEach((String name, List<String> values) => values.forEach((value) => response.headers.add(name, value)));
+        response.contentLength = clientResponse.contentLength;
+        response.reasonPhrase = clientResponse.reasonPhrase;
+        response.statusCode = clientResponse.statusCode;
+        
+//        print("-------------response---------------");
+//        print("HEADERS : \n${response.headers}");
+//        print("contentLength : ${response.contentLength}");
+//        print("reasonPhrase : ${response.reasonPhrase}");
+//        print("statusCode : ${response.statusCode}");
+//        print("------------------------------------");
+
+        if(clientResponse.contentLength > 0) {
+          clientResponse.inputStream.pipe(response.outputStream, true);
+        } else {
+          response.outputStream.close();
+        }
+      });
+    };
   }
   
   set twitterApiUrl(String value) => _twitterApiUrl = value;
