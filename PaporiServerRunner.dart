@@ -1,6 +1,6 @@
 #import('dart:io');
-#import('package:log4dart/Lib.dart');
 #import("./src/server/PaporiServer.dart");
+#import('package:log4dart/Lib.dart');
 
 main() {
   var _logger = LoggerFactory.getLogger("main");

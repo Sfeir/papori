@@ -7,13 +7,15 @@
 #import('../utils/XMLHttpRequests.dart');
 #import('../../shared/utils/Uris.dart');
 
+#import('../../shared/data/UserToFollow.dart');
+
 /**
 * Adapter for Twitter REST API.
 */
 class TwitterAdapter {
   final Logger _logger;
   
-  String _twitterApiUrl = 'https://api.twitter.com';
+  String twitterApiUrl = 'https://api.twitter.com';
   
   static final String _TEST_URL =  '/1/help/test.json';
   
@@ -26,7 +28,7 @@ class TwitterAdapter {
   Future<bool> testConnection() {
     Completer result = new Completer();
     
-    var url = "$_twitterApiUrl$_TEST_URL"; 
+    var url = "$twitterApiUrl$_TEST_URL"; 
 
     // call the web server asynchronously 
     XMLHttpRequests.getXMLHttpRequest(url, onRequestSuccess(XMLHttpRequest req) {
@@ -82,8 +84,18 @@ class TwitterAdapter {
     
     return Strings.join(params, '&');
   }
-  
     
-  String get twitterApiUrl() => _twitterApiUrl;
-  set twitterApiUrl(String value) => _twitterApiUrl = value;
+  /**
+  * Check for a user Twitter posted statuses and return the number of new statuses
+  */
+  checkTwitterActivityOfUser(UserToFollow user, int resultCount, onSuccess(String newTweet)){
+    var url = "$twitterApiUrl$_STATUSES_USER_TIMELINE";
+    print("GET - $url");
+    var request = new XMLHttpRequest.get(url, onRequestSuccess(XMLHttpRequest request) {
+      print("${request.status} - $_TEST_URL - ${request.responseText}");
+      onSuccess("There is ${request.responseText} new tweets");
+    });
+  }
+
+    
 }

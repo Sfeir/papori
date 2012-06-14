@@ -14,14 +14,18 @@ class Alert {
     add_Alert_templatesStyles();
 
     _fragment = new DocumentFragment();
-    var e0 = new Element.html('<div class="alert ${type}"></div>');
+    var e0 = new Element.html('<div class="row"></div>');
     _fragment.elements.add(e0);
-    var e1 = new Element.html('<a data-dismiss="alert" href="#" class="close">×</a>');
+    var e1 = new Element.html('<div class="span12"></div>');
     e0.elements.add(e1);
-    var e2 = new Element.html('<h4 class="alert-heading">${inject_0()}</h4>');
-    e0.elements.add(e2);
-    var e3 = new Element.html('<p>${inject_1()}</p>');
-    e0.elements.add(e3);
+    var e2 = new Element.html('<div class="alert ${type}"></div>');
+    e1.elements.add(e2);
+    var e3 = new Element.html('<a data-dismiss="alert" href="#" class="close">×</a>');
+    e2.elements.add(e3);
+    var e4 = new Element.html('<h4 class="alert-heading">${inject_0()}</h4>');
+    e2.elements.add(e4);
+    var e5 = new Element.html('<p>${inject_1()}</p>');
+    e2.elements.add(e5);
   }
 
   Element get root() => _fragment;

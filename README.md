@@ -47,7 +47,7 @@ Configure your environnement
 Set the DART_SDK variable to the dart SDK path :
 > 	DART_SDK=~/dart-editor/dart-sdk
 
-In the dart Editor, set the package directory : "Tools" > "Preferences" > "Editor" and in "Package directory" browse to ~/dart/papori/packages
+In the dart Editor, set the package directory : "Tools" > "Preferences" > "Editor" and in "Package directory" browse to ~/dart/papori/packages/
 
 Run the application
 ------------------------------------------------
