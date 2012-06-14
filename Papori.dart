@@ -41,7 +41,7 @@ class Papori {
       TwitterAdapter adapter = new TwitterAdapter();
       adapter.twitterApiUrl = "http://${window.location.host}/twitter";
       _logger.info("Twitter Url : ${adapter.twitterApiUrl}");
-      adapter.testConnection((result) => _displayAlert("Response", result ? "Succeeded" : "FAILED", result ? "alert-success" : "alert-error"));
+      adapter.testConnection().then((result) => _displayAlert("Response", result ? "Succeeded" : "FAILED", result ? "alert-success" : "alert-error"));
     });
     document.query("#container").elements.add(button);
   }
