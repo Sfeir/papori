@@ -2,6 +2,8 @@
 #import('src/client/adapter/TwitterAdapter.dart');
 #import('package:log4dart/Lib.dart');
 #import('src/shared/data/UserToFollow.dart');
+#import('src/shared/data/Error.dart');
+#source('src/client/template/Errors.dart');
 #source('src/client/template/Alert.dart');
 #source('src/client/template/Dashboard.dart');
 #source('src/client/template/DashboardItem.dart');
@@ -17,6 +19,7 @@ class Papori {
     _displayTwitterTestButton();
     _displayPaporiTestButton();
     _displayDashboard();
+    _displayListErrors();
   }
   
   void _displayDartStatus() {
@@ -50,6 +53,21 @@ class Papori {
 	   Dashboard dashboard = new Dashboard();
 	   var dashboardElement = new Element.html(dashboard.root.outerHTML);
 	   document.query("#container").elements.add(dashboardElement);
+	}
+		
+	void _displayListErrors(){
+	  Error error = new Error();
+	  error.title = "NullPointerException";
+	  error.message = """Exception in thread "main" java.lang.NullPointerException
+  at javaerrornullpointerexception.main(javaerrornullpointerexception.java:8)
+Java Result: 1""";
+    Error error2 = new Error();
+    error2.title = "ArrayOutOfBoundException";
+    error2.message = """java.lang.ArrayIndexOutOfBoundsException: 0""";
+	  List errors = [error, error2];
+	  Errors errorsWidget = new Errors("Errors", errors, "alert-danger");
+	  var dashboardElement = new Element.html(errorsWidget.root.outerHTML);
+    document.query("#container").elements.add(dashboardElement);
 	}
   
   void _displayTwitterTestButton(){
