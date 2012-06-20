@@ -1,4 +1,12 @@
-.children
-.project
+# External libs #
+#################
 packages/
 
+# Editor files #
+################
+.children
+.project
+
+# OS generated files #
+######################
+*~

@@ -11,10 +11,12 @@ class Uris {
   }
   
   static Map<String, List<String>> parseQuery(String query){
-    query = query.startsWith('?') ? query.substring(1) : query;
-    
+    return parseFormUrlEncoded(query.startsWith('?') ? query.substring(1) : query);
+  }
+  
+  static Map<String, List<String>> parseFormUrlEncoded(String content){
     Map<String, List<String>> result = new LinkedHashMap();
-    List<List<String>> keyValues = query.split('&')
+    List<List<String>> keyValues = content.split('&')
         .filter((keyValue) => !keyValue.isEmpty())
         .map((keyValue) => keyValue.split('='));
     keyValues.forEach((keyValue) {

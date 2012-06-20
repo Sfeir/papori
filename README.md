@@ -57,7 +57,8 @@ In the dart Editor, set the packages directory : "Tools" > "Preferences" > "Edit
 Run the application
 ------------------------------------------------
 
-Right click on PaporiServerRunner.dart file, and select "Run". Open dartium on http://localhost:8080.
+First, run the server : right click on PaporiServerRunner.dart file, and select "Run". 
+Then open dartium : right click on Papori.html file, and select "Run". Change the url to http://localhost:8080.
 
 Development Tools
 =================
