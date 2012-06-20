@@ -1,10 +1,14 @@
-template Alert(String header, String message, String type){
+template Errors(String header, List errors, String type){
 	<div class="row">
 	<div class="span12">
 	<div class="alert ${type}">
 	  <a class="close" data-dismiss="alert" href="#">×</a>
 	  <h4 class="alert-heading">${header}</h4>
-	  <p>${message}</p>
+	  <ul>
+	  ${#each errors error}
+      	<li>${error.title}  >  ${error.message}</li>
+      ${/each}
+      </ul>
 	</div>
 	</div>
 	</div>
