@@ -33,7 +33,7 @@ class TwitterAdapterTest implements Runnable {
       adapter.testConnection().then(callback);
     });
     
-    solo_test('requestToken', () {
+    test('requestToken', () {
       var adapter = new TwitterAdapter();
       // à faire tourner sur le serveur Papori
       adapter.proxyUrl = "http://${window.location.host}/twitter";
