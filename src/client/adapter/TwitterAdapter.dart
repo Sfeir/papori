@@ -7,6 +7,7 @@
 
 #import('../../../src/client/utils/XMLHttpRequests.dart');
 #import('../../../src/shared/utils/OAuth.dart');
+#import('../../../src/shared/utils/Uris.dart');
 
 #import('../../../src/shared/data/UserToFollow.dart');
 
@@ -19,6 +20,11 @@ class TwitterAdapter {
   String twitterApiUrl = 'http://api.twitter.com';
   String proxyUrl = 'https://api.twitter.com';
   String consumerKey = 'zxye2O5CZiVaT507MGplGw';
+  String consumerSecret = 'RSnBDTO9FC5d2ol8lKLHVQkkMX5RFZCtWEVPsli4I';
+
+  String accessToken;
+  String accessTokenSecret;
+
   String authToken = '';
   
   static final String _TEST_URL =  '/1/help/test.json';
@@ -53,13 +59,14 @@ class TwitterAdapter {
   * https://dev.twitter.com/docs/api/1/post/oauth/request_token
   * https://api.twitter.com/oauth/request_token
   */
-  Future<String> requestToken(String callbackUrl){
+  Future<Map<String, List<String>>> requestToken(String callbackUrl){
     Map<String, String> oauthParameters = {
-                                           'oauth_nonce' : OAuth.randomKey(),
+                                           'oauth_nonce' : OAuth.getNonce(),
                                            'oauth_callback' : callbackUrl,
                                            'oauth_signature_method' : 'HMAC-SHA1',
                                            'oauth_timestamp' : (new Date.now().value / 1000).toInt().toString(),
                                            'oauth_consumer_key' : consumerKey,
+//                                           'oauth_token' : accessToken,
                                            'oauth_version' : '1.0',
     };
     
@@ -68,33 +75,20 @@ class TwitterAdapter {
     var twitterUrl = new Uri.fromString("$twitterApiUrl$_REQUEST_TOKEN_URL"); 
 
     var baseSignature = OAuth.buildRawBaseSignature(method, twitterUrl, oauthParameters);
-    _logger.debug(baseSignature);
-    oauthParameters['oauth_signature'] = OAuth.hashSignature(baseSignature, consumerKey);
-    oauthParameters['oauth_callback'] = "$callbackUrl/Papori.html";
+    oauthParameters['oauth_signature'] = OAuth.hashSignature(baseSignature, consumerSecret);
 
-    Completer<String> result = new Completer();
+    Completer<Map<String, List<String>>> result = new Completer();
 
     // call the web server asynchronously 
     XMLHttpRequests.postXMLHttpRequest(url, headers : { 'Authorization' : [OAuth.concatOAuthParameters(oauthParameters)] }, 
       onSuccess : (XMLHttpRequest req) {
-        result.complete(req.responseText);
+        _logger.debug(req.responseText);
+        result.complete(Uris.parseFormUrlEncoded(req.responseText));
       },
       onFail : (XMLHttpRequest req) {
-        result.complete(req.responseText);
+        result.completeException(new Exception(req.responseText));
       });
     
     return result.future;
-  }
-    
-  /**
-  * Check for a user Twitter posted statuses and return the number of new statuses
-  */
-  checkTwitterActivityOfUser(UserToFollow user, int resultCount, onSuccess(String newTweet)){
-    var url = "$proxyUrl$_STATUSES_USER_TIMELINE";
-    print("GET - $url");
-    var request = new XMLHttpRequest.get(url, onRequestSuccess(XMLHttpRequest request) {
-      print("${request.status} - $_TEST_URL - ${request.responseText}");
-      onSuccess("There is ${request.responseText} new tweets");
-    });
   }
 }

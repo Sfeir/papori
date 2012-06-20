@@ -32,14 +32,13 @@ class OAuth {
 //    return [].;
 //  }
   
-  static String randomKey(){
+  /** Retourne 32 bytes aléatoires encodé en base 64 */  
+  static String getNonce(){
     // TODO : l'aléatoire peut être optimisé
     return Base64.encode(new List(32).map((e)=> ((Math.random() * 256) + 1).toInt() ^ new Date.now().value));
   }
   
-  /**
-  * Construit la signature de base pour une requête.
-  */
+  /** Construit la signature de base pour une requête. */
   static String buildRawBaseSignature(String method, Uri url, [Map<String, String> oauthParameters, Map<String, List<String>> parameters]){
     // https://dev.twitter.com/docs/auth/creating-signature
     
@@ -63,16 +62,13 @@ class OAuth {
         params.forEach((key, values) => paramsMap.putIfAbsent(key, () => []).addAll(values));
       }
     }
-    print(paramsMap);
 
     result.add(encodeUriComponent(_concatSignatureParameters(paramsMap)));
     
     return result.toString();
   }
  
-  /**
-  * Concatene les parametres de la signature.
-  */
+  /** Concatene les parametres de la signature. */
   static String _concatSignatureParameters(Map<String, List<String>> parameters){
     // TODO : use TreeMap when implemenented
     Map<String, List<String>> paramsMap = new Map();
@@ -91,22 +87,18 @@ class OAuth {
     return Strings.join(params, '&');
   }
   
-  /**
-  * Hash la signature avec la méthode HMAC-SHA1, la consumerKey et le token d'authentification si présent.
-  */
-  static String hashSignature(String baseSignature, String consumerKey, [String token = '']) {
-    String signingKey = token == null ? "${encodeUriComponent(consumerKey)}&" : "${encodeUriComponent(consumerKey)}&${encodeUriComponent(token)}";
+  /** Hash la signature [baseSignature] avec la méthode HMAC-SHA1, la [consumerSecret] et le [tokenSecret] d'authentification si présent. */
+  static String hashSignature(String baseSignature, String consumerSecret, [String tokenSecret = '']) {
+    String signingKey = "${encodeUriComponent('$consumerSecret')}&${encodeUriComponent('$tokenSecret')}";
     HMAC hmac = new HMAC(new SHA1(), encodeUtf8(signingKey));
     hmac.update(encodeUtf8(baseSignature));
     return Base64.encode(hmac.digest());
   }
   
-  /**
-  * Concatène les parametres OAuth, pour l'entete HTTP Authorization.
-  */
+  /** Concatène les parametres OAuth, pour l'entete HTTP Authorization. */
   static String concatOAuthParameters(Map<String, String> oauthParameters) {
     List<String> params = [];
-    oauthParameters.forEach((key, value) => params.add("${encodeUriComponent(key)}=\"${encodeUriComponent(value)}\""));
+    oauthParameters.forEach((key, value) => params.add("${encodeUriComponent('$key')}=\"${encodeUriComponent('$value')}\""));
 
     StringBuffer result = new StringBuffer('OAuth ');
     result.add(Strings.join(params, ', '));
