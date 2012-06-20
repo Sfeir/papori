@@ -47,7 +47,12 @@ Configure your environnement
 Set the DART_SDK variable to the dart SDK path :
 > 	DART_SDK=~/dart-editor/dart-sdk
 
-In the dart Editor, set the package directory : "Tools" > "Preferences" > "Editor" and in "Package directory" browse to ~/dart/papori/packages/
+Then change the current directory, to the project folder : 
+> 	cd ~/dart/papori
+And retrieve external packages, using the package manager : 
+> 	$DART_SDK/bin/pub install
+
+In the dart Editor, set the packages directory : "Tools" > "Preferences" > "Editor" and in "Package directory" browse to ~/dart/papori/packages/
 
 Run the application
 ------------------------------------------------
@@ -87,7 +92,7 @@ Useful link :
 
 Use pub : the Dart Package Manager
 ------------------------------------------------
-Open a terminal, and change the current directory to the papory project directory, "dart/papori".
+Open a terminal, and change the current directory to the papori project directory, ~/dart/papori.
 > 	$DART_SDK/bin/pub install is in your environnement path
 
 

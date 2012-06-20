@@ -8,7 +8,7 @@
 class UrisTest implements Runnable {
   run(){
     test('parseQuery', () {
-      String query = '?a=b&a%20b=i%20j&null&empty=&a=c';
+      String query = '?a=b&a%20b=i%20j&&&null&empty=&a=c&&';
       
       Map<String, List<String>> output = Uris.parseQuery(query);
       
@@ -25,6 +25,14 @@ class UrisTest implements Runnable {
       expect(output['a b'], orderedEquals(['i j']));
       expect(output['null'], orderedEquals([null]));
       expect(output['empty'], orderedEquals(['']));
+    });
+
+    test('parseEmptyQuery', () {
+      String query = '';
+      
+      Map<String, List<String>> output = Uris.parseQuery(query);
+      
+      expect(output.isEmpty());
     });
   }
 }
