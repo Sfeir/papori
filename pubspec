@@ -4,4 +4,3 @@ dependencies:
     git: git://github.com/chrisbu/dartwatch-JsonObject
   log4dart:
     git: git://github.com/Qalqo/log4dart
-

@@ -81,7 +81,7 @@ class PaporiServer {
   _twitterHandler(HttpRequest request, HttpResponse response){
     _exceptionHandler(request, response, () {
       var path = request.path.substring(_TWEETER_PATH_PREFIX.length);
-      _logger.debug("${request.method} - http://$_twitterApiUrl$path");
+      _logger.info("${request.method} - http://$_twitterApiUrl$path");
   
       HttpClientConnection client = new HttpClient().open(request.method, _twitterApiUrl, _twitterApiPort, path);
       _proxify(request, response, client);
@@ -99,11 +99,12 @@ class PaporiServer {
   _paporiHandler(HttpRequest request, HttpResponse response){
     _exceptionHandler(request, response, () {
       Map data = new Map(); // create a map for the response
-      print("Request for ${request.path}");
       data["get"] = request.path; // add the path to the data
       String responseData = JSON.stringify(data); // convert the map to JSON
+      response.statusCode = 200;
       response.outputStream.writeString(responseData); // send the data back to the client
       response.outputStream.close(); // close the response
+      _logger.info("${response.statusCode} - ${request.path}}");
     });
   }
   
@@ -129,7 +130,7 @@ class PaporiServer {
   }
   
   /**
-  * Traitement des requêtes "Twitter".
+  * Traitement des requêtes de test pour les packages.
   */
   _packagesHandler(HttpRequest request, HttpResponse response){
     var path = request.path.substring(_PACKAGES_PATH_PREFIX.length);
@@ -154,12 +155,13 @@ class PaporiServer {
       // On vérifie si le fichier existe
       if(requestedFile.existsSync()){
         response.statusCode = 200;
+        response.contentLength = requestedFile.lengthSync();
         requestedFile.openInputStream().pipe(response.outputStream, true);
-        _logger.debug("${response.statusCode} - ${request.path} - ${requestedFile.fullPathSync()}");
+        _logger.info("${response.statusCode} - ${request.path} - ${requestedFile.fullPathSync()}");
       } else {
         response.statusCode = 404;
         response.outputStream.close();
-        _logger.debug("${response.statusCode} - ${request.path}}");
+        _logger.info("${response.statusCode} - ${request.path}}");
       }
     });
   }
@@ -183,18 +185,16 @@ class PaporiServer {
   */
   _proxify(HttpRequest request, HttpResponse response, HttpClientConnection client){
     client.onRequest = (HttpClientRequest clientRequest) {
-//        print("-------------request----------------");
-//        print("HEADERS : \n${request.headers}");
-//        print("contentLength : ${request.contentLength}");
-//        print("------------------------------------");
+
+      _logHttpRequest("request", request);
       
-      request.headers.forEach((String name, List<String> values) => ['host'].every((n) => n != name) ?  values.forEach((value) => clientRequest.headers.add(name, value)) : '');
+      request.headers.forEach((String name, List<String> values) => 
+          'host' != name.toLowerCase() ?  
+              values.forEach((value) => clientRequest.headers.add(name, value)) 
+              : null);
       clientRequest.contentLength = request.contentLength;
 
-//      print("-----------clientRequest------------");
-//      print("HEADERS : \n${clientRequest.headers}");
-//      print("contentLength : ${clientRequest.contentLength}");
-//      print("------------------------------------");
+      _logHttpRequest("clientRequest", clientRequest);
 
       if(request.contentLength > 0){
         request.inputStream.pipe(clientRequest.outputStream, true);
@@ -204,24 +204,14 @@ class PaporiServer {
     };
     client.onResponse = (HttpClientResponse clientResponse){
       _exceptionHandler(request, response, () {
-//        print("-----------clientResponse-----------");
-//        print("HEADERS : \n${clientResponse.headers}");
-//        print("contentLength : ${clientResponse.contentLength}");
-//        print("reasonPhrase : ${clientResponse.reasonPhrase}");
-//        print("statusCode : ${clientResponse.statusCode}");
-//        print("------------------------------------");
+        _logHttpResponse("clientResponse", clientResponse);
         
         clientResponse.headers.forEach((String name, List<String> values) => values.forEach((value) => response.headers.add(name, value)));
         response.contentLength = clientResponse.contentLength;
         response.reasonPhrase = clientResponse.reasonPhrase;
         response.statusCode = clientResponse.statusCode;
-        
-//        print("-------------response---------------");
-//        print("HEADERS : \n${response.headers}");
-//        print("contentLength : ${response.contentLength}");
-//        print("reasonPhrase : ${response.reasonPhrase}");
-//        print("statusCode : ${response.statusCode}");
-//        print("------------------------------------");
+    
+        _logHttpResponse("response", response);
 
         if(clientResponse.contentLength > 0) {
           clientResponse.inputStream.pipe(response.outputStream, true);
@@ -230,6 +220,22 @@ class PaporiServer {
         }
       });
     };
+  }
+  
+  _logHttpRequest(String name, request){
+    _logger.debug("\n------------- $name ----------------\n"
+      "contentLength : ${request.contentLength}\n"
+    "HEADERS : \n${request.headers}\n"
+    "------------------------------------\n");
+  }
+  
+  _logHttpResponse(String name, response){
+    _logger.debug("\n------------- $name ----------------\n"
+      "statusCode : ${response.statusCode}\n"
+    "reasonPhrase : ${response.reasonPhrase}\n"
+    "contentLength : ${response.contentLength}\n"
+    "HEADERS : \n${response.headers}\n"
+    "------------------------------------\n");
   }
   
   set twitterApiUrl(String value) => _twitterApiUrl = value;

@@ -10,23 +10,25 @@
 #import('./shared/parser/JsonParserTest.dart');
 #import('./client/utils/XMLHttpRequestsTest.dart');
 #import('./shared/utils/UrisTest.dart');
-//#import('./server/PaporiServerTest.dart');
+#import('./shared/utils/OAuthTest.dart');
 
 /**
 * Run the tests suite
 */
 class TestSuite {
-  final Collection<Runnable> _tests;
+  final Map<String, Runnable> _tests;
   
-  TestSuite() : _tests = [
-                          new TwitterAdapterTest(),
-//                          new PaporiServerTest(),
-                          new JsonParserTest(),
-                          new UrisTest(),
-                          ];
+  TestSuite() : _tests = {
+                          'TwitterAdapterTest' : new TwitterAdapterTest(),
+                          'JsonParserTest' : new JsonParserTest(),
+                          'UrisTest' : new UrisTest(),
+                          'OAuthTest' : new OAuthTest(),
+  };
   
   void run() {
-    _tests.forEach((_test) => _test.run());
+    _tests.forEach((name, _test) { 
+      group(name, _test.run);
+    });
   }
 }
 

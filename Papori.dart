@@ -60,8 +60,8 @@ class Papori {
     button.style.margin = "10px";
     button.on.click.add((Event event) {
       TwitterAdapter adapter = new TwitterAdapter();
-      adapter.twitterApiUrl = "http://${window.location.host}/twitter";
-      _logger.info("Twitter Url : ${adapter.twitterApiUrl}");
+      adapter.proxyUrl = "http://${window.location.host}/twitter";
+      _logger.info("Twitter Url : ${adapter.proxyUrl}");
       adapter.testConnection().then((result) => _displayAlert("Response", result ? "Succeeded" : "FAILED", result ? "alert-success" : "alert-error"));
     });
     document.query("#content").elements.add(button);
