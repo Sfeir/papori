@@ -14,7 +14,9 @@ class Uris {
     query = query.startsWith('?') ? query.substring(1) : query;
     
     Map<String, List<String>> result = new LinkedHashMap();
-    List<List<String>> keyValues = query.split('&').map((keyValue) => keyValue.split('='));
+    List<List<String>> keyValues = query.split('&')
+        .filter((keyValue) => !keyValue.isEmpty())
+        .map((keyValue) => keyValue.split('='));
     keyValues.forEach((keyValue) {
       var key = decodeUriComponent(keyValue[0]);
       var value = keyValue.length > 1 ? decodeUriComponent(keyValue[1]) : null;

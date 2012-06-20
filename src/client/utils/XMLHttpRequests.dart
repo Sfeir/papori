@@ -3,17 +3,20 @@
 #import('dart:html');
 #import('package:log4dart/Lib.dart');
 
+/**
+* Classe utilitaire pour les XMLHttpRequest.
+*/
 class XMLHttpRequests {
-  static getXMLHttpRequest(String url, [onSuccess(XMLHttpRequest request), onFail(XMLHttpRequest request)]){
-    sendXMLHttpRequest('GET', url, null, onSuccess, onFail);
+  static getXMLHttpRequest(String url, [Map<String, List<String>> headers, onSuccess(XMLHttpRequest request), onFail(XMLHttpRequest request)]){
+    sendXMLHttpRequest('GET', url, null, headers, onSuccess, onFail);
   }
   
-  static postXMLHttpRequest(String url, [data, onSuccess(XMLHttpRequest request), onFail(XMLHttpRequest request)]){
-    sendXMLHttpRequest('POST', url, data, onSuccess, onFail);
+  static postXMLHttpRequest(String url, [data, Map<String, List<String>> headers, onSuccess(XMLHttpRequest request), onFail(XMLHttpRequest request)]){
+    sendXMLHttpRequest('POST', url, data, headers, onSuccess, onFail);
   }
   
-  static sendXMLHttpRequest(String method, String url, [data, onSuccess(XMLHttpRequest request), onFail(XMLHttpRequest request), Logger logger]) {
-    final request =_buildXMLHttpRequest(method, url, onResponse : (XMLHttpRequest request){
+  static sendXMLHttpRequest(String method, String url, [data, Map<String, List<String>> headers, onSuccess(XMLHttpRequest request), onFail(XMLHttpRequest request), Logger logger]) {
+    final request = buildXMLHttpRequest(method, url, headers, onResponse : (XMLHttpRequest request){
       if(logger != null){
         logger.info("${request.status} - $url - ${request.responseText}");
       }
@@ -33,10 +36,13 @@ class XMLHttpRequests {
     request.send(data);
   }
   
-  static XMLHttpRequest _buildXMLHttpRequest(String method, String url, [onRequest(XMLHttpRequest request), onResponse(XMLHttpRequest response)]) {
+  static XMLHttpRequest buildXMLHttpRequest(String method, String url, [Map<String, List<String>> headers, onRequest(XMLHttpRequest request), onResponse(XMLHttpRequest response)]) {
     final request = new XMLHttpRequest();
     request.open(method, url);
-    request.withCredentials = true;
+    request.withCredentials = false;
+    if(headers != null) {
+      headers.forEach((key, values) => values.forEach((value) => request.setRequestHeader(key, value)));
+    }
     
     if(onRequest != null){
       onRequest(request);

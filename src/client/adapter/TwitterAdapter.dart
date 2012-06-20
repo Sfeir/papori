@@ -4,10 +4,11 @@
 #import('dart:json');
 #import('dart:uri');
 #import('package:log4dart/Lib.dart');
-#import('../utils/XMLHttpRequests.dart');
-#import('../../shared/utils/Uris.dart');
 
-#import('../../shared/data/UserToFollow.dart');
+#import('../../../src/client/utils/XMLHttpRequests.dart');
+#import('../../../src/shared/utils/OAuth.dart');
+
+#import('../../../src/shared/data/UserToFollow.dart');
 
 /**
 * Adapter for Twitter REST API.
@@ -15,9 +16,13 @@
 class TwitterAdapter {
   final Logger _logger;
   
-  String twitterApiUrl = 'https://api.twitter.com';
+  String twitterApiUrl = 'http://api.twitter.com';
+  String proxyUrl = 'https://api.twitter.com';
+  String consumerKey = 'zxye2O5CZiVaT507MGplGw';
+  String authToken = '';
   
   static final String _TEST_URL =  '/1/help/test.json';
+  static final String _REQUEST_TOKEN_URL =  '/oauth/request_token';
   
   TwitterAdapter() : _logger = LoggerFactory.getLogger("TwitterAdapter");
   
@@ -26,76 +31,70 @@ class TwitterAdapter {
   * See https://dev.twitter.com/docs/api/1/get/help/test
   */
   Future<bool> testConnection() {
-    Completer result = new Completer();
+    Completer<bool> result = new Completer();
     
-    var url = "$twitterApiUrl$_TEST_URL"; 
+    var url = "$proxyUrl$_TEST_URL"; 
 
     // call the web server asynchronously 
-    XMLHttpRequests.getXMLHttpRequest(url, onRequestSuccess(XMLHttpRequest req) {
-      result.complete(req.responseText == '"ok"');
-    }, onRequestFail(XMLHttpRequest req) {
-      result.complete(false);
-    });
+    XMLHttpRequests.getXMLHttpRequest(url, 
+      onSuccess : (XMLHttpRequest req) {
+        result.complete(req.responseText == '"ok"');
+      }, 
+      onFail : (XMLHttpRequest req) {
+        result.complete(false);
+      });
     
     return result.future;
   }
   
-  Future<String> requestToken(){
-//    https://api.twitter.com/oauth/request_token
-  }
-  
-  static String buildRawSignature(String method, Uri url, Map<String, List<String>> parameters){
-    StringBuffer result = new StringBuffer();
-    // HTTP Method to uppercase
-    result.add(method.toUpperCase());
-    result.add('&');
+  /**
+  * Obtient un token d'autorisation.
+  *
+  * https://dev.twitter.com/docs/api/1/post/oauth/request_token
+  * https://api.twitter.com/oauth/request_token
+  */
+  Future<String> requestToken(String callbackUrl){
+    Map<String, String> oauthParameters = {
+                                           'oauth_nonce' : OAuth.randomKey(),
+                                           'oauth_callback' : callbackUrl,
+                                           'oauth_signature_method' : 'HMAC-SHA1',
+                                           'oauth_timestamp' : (new Date.now().value / 1000).toInt().toString(),
+                                           'oauth_consumer_key' : consumerKey,
+                                           'oauth_version' : '1.0',
+    };
     
-    // Encoded base URL
-    Uri baseUrl = new Uri(url.scheme, url.userInfo, url.domain, url.port, url.path);
-    result.add(encodeUriComponent(baseUrl.toString()));
-    result.add('&');
+    String method = 'POST';
+    var url = "$proxyUrl$_REQUEST_TOKEN_URL"; 
+    var twitterUrl = new Uri.fromString("$twitterApiUrl$_REQUEST_TOKEN_URL"); 
 
-    // Key sorted and encoded parameters
-    // TODO : use TreeMap when implemenented
-    Map<String, List<String>> paramsMap = new Map.from(parameters);
-    Map<String, List<String>> query = Uris.parseUriQuery(url);
-    query.forEach((key, values) => paramsMap.putIfAbsent(key, () => []).addAll(values));
-//    paramsMaps.addAll(url.query.split('&'));
-    
+    var baseSignature = OAuth.buildRawBaseSignature(method, twitterUrl, oauthParameters);
+    _logger.debug(baseSignature);
+    oauthParameters['oauth_signature'] = OAuth.hashSignature(baseSignature, consumerKey);
+    oauthParameters['oauth_callback'] = "$callbackUrl/Papori.html";
 
-    result.add(encodeUriComponent(buildSignatureParametersChain(paramsMap)));
+    Completer<String> result = new Completer();
+
+    // call the web server asynchronously 
+    XMLHttpRequests.postXMLHttpRequest(url, headers : { 'Authorization' : [OAuth.concatOAuthParameters(oauthParameters)] }, 
+      onSuccess : (XMLHttpRequest req) {
+        result.complete(req.responseText);
+      },
+      onFail : (XMLHttpRequest req) {
+        result.complete(req.responseText);
+      });
     
-    return result.toString();
-  }
-  
-  static String buildSignatureParametersChain(Map<String, List<String>> parameters){
-    // Deep copy
-    Map<String, List<String>> paramsMap = new Map.from(parameters);
-    paramsMap.forEach((key, values) { 
-      paramsMap[key] = new List.from(values);
-      paramsMap[key].sort((a, b) => a.compareTo(b));
-    });
-    
-    List<String> keys = new List.from(paramsMap.getKeys());
-    keys.sort((a, b) => a.compareTo(b));
-    
-    List<String> params = [];
-    keys.map((key) => paramsMap[key].forEach((value) => params.add("${encodeUriComponent(key)}=${encodeUriComponent(value)}")));
-    
-    return Strings.join(params, '&');
+    return result.future;
   }
     
   /**
   * Check for a user Twitter posted statuses and return the number of new statuses
   */
   checkTwitterActivityOfUser(UserToFollow user, int resultCount, onSuccess(String newTweet)){
-    var url = "$twitterApiUrl$_STATUSES_USER_TIMELINE";
+    var url = "$proxyUrl$_STATUSES_USER_TIMELINE";
     print("GET - $url");
     var request = new XMLHttpRequest.get(url, onRequestSuccess(XMLHttpRequest request) {
       print("${request.status} - $_TEST_URL - ${request.responseText}");
       onSuccess("There is ${request.responseText} new tweets");
     });
   }
-
-    
 }
