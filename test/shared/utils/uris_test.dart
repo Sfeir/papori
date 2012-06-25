@@ -2,9 +2,9 @@
 
 #import('dart:uri');
 #import('package:unittest/unittest.dart');
-#import('../../Runnable.dart');
+#import('../../runnable.dart');
 
-#import('../../../src/shared/utils/Uris.dart');
+#import('../../../src/shared/utils/uris.dart');
 
 class UrisTest implements Runnable {
   run(){

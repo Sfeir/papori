@@ -4,9 +4,9 @@
 #import('dart:crypto');
 #import('dart:utf');
 
-#import('../../../src/shared/utils/Base64.dart');
-#import('../../../src/shared/utils/Uris.dart');
-#import('../../../src/shared/utils/Comparison.dart');
+#import('../../../src/shared/utils/base_64.dart');
+#import('../../../src/shared/utils/uris.dart');
+#import('../../../src/shared/utils/comparison.dart');
 
 /**
 * Classe utilitaire pour la construction des entêtes OAuth 1.0.

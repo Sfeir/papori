@@ -3,11 +3,11 @@
 #import('dart:uri');
 
 #import('package:unittest/unittest.dart');
-#import('../../../test/Runnable.dart');
+#import('../../../test/runnable.dart');
 
 
-#import('../../../src/shared/utils/OAuth.dart');
-#import('../../../src/shared/utils/Base64.dart');
+#import('../../../src/shared/utils/oauth.dart');
+#import('../../../src/shared/utils/base_64.dart');
 
 class OAuthTest implements Runnable {
   run() {
