@@ -4,7 +4,7 @@
 #import('dart:crypto');
 #import('dart:utf');
 
-#import('../../../src/shared/utils/base_64.dart');
+#import('../../../src/shared/utils/base64.dart');
 #import('../../../src/shared/utils/uris.dart');
 #import('../../../src/shared/utils/comparison.dart');
 

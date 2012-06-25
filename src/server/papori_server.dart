@@ -16,29 +16,20 @@ class PaporiServer {
 
   static final String _TWEETER_PATH_PREFIX = '/twitter';
   static final String _PAPORI_PATH_PREFIX = '/papori';
-  static final String _DART_EDITOR_PATH_PREFIX = '/dart-editor';
-  static final String _PACKAGES_PATH_PREFIX = '/test/packages';
 
-  HttpServer _server;
-  String _host;
-  int _port;
-  String _rootPath;
-  String _sdkPath;
-  String _packagesPath;
-  String _twitterApiUrl = 'api.twitter.com';
-  int _twitterApiPort = 80;
-  List<String> _indexFiles = const ['index.html'];
+  final String host = '127.0.0.1';
+  final int port = 8080;
+  final String rootPath = '.';
+  final HttpServer _server;
 
-  PaporiServer() : _logger = LoggerFactory.getLogger("PaporiServer");
+  String twitterApiUrl = 'api.twitter.com';
+  int twitterApiPort = 80;
+  List<String> indexFiles = const ['index.html'];
 
-  PaporiServer.get(String host, int port, [String rootPath = '.'])
+  PaporiServer.get(String this.host, int this.port, [String this.rootPath = '.'])
   :
     _logger = LoggerFactory.getLogger("PaporiServer"),
-    _server = new HttpServer(),
-    this._host = host,
-    this._port = port,
-    this._rootPath = rootPath,
-    this._sdkPath = '.'
+    _server = new HttpServer()
   {
   }
 
@@ -46,12 +37,10 @@ class PaporiServer {
   * Lance le serveur.
   */
   start(){
-    _server.listen(_host, _port);
+    _server.listen(host, port);
     _server.defaultRequestHandler = _staticResquestHandler;
     _server.addRequestHandler(_twitterMatcher, _twitterHandler);
     _server.addRequestHandler(_paporiMatcher, _paporiHandler);
-    _server.addRequestHandler(_dartEditorMatcher, _dartEditorHandler);
-    _server.addRequestHandler(_packagesMatcher, _packagesHandler);
   }
 
   /**
@@ -65,7 +54,7 @@ class PaporiServer {
   * Récupére les fichiers locaux, retourne une erreur 404 si inexistant, 500 si erreur
   */
   _staticResquestHandler(HttpRequest request, HttpResponse response) {
-    _fileResponse(request, response, "$_rootPath${request.path}");
+    _fileResponse(request, response, "$rootPath${request.path}");
   }
 
   /**
@@ -81,9 +70,9 @@ class PaporiServer {
   _twitterHandler(HttpRequest request, HttpResponse response){
     _exceptionHandler(request, response, () {
       var path = request.path.substring(_TWEETER_PATH_PREFIX.length);
-      _logger.info("${request.method} - http://$_twitterApiUrl$path");
+      _logger.info("${request.method} - http://$twitterApiUrl$path");
 
-      HttpClientConnection client = new HttpClient().open(request.method, _twitterApiUrl, _twitterApiPort, path);
+      HttpClientConnection client = new HttpClient().open(request.method, twitterApiUrl, twitterApiPort, path);
       _proxify(request, response, client);
     });
   }
@@ -109,35 +98,6 @@ class PaporiServer {
   }
 
   /**
-  * Règle de matching pour les requêtes de test commençant par /dart-editor/
-  */
-  bool _dartEditorMatcher(HttpRequest request){
-    return request.path.startsWith("$_DART_EDITOR_PATH_PREFIX/");
-  }
-
-  /**
-  * Traitement des requêtes "Twitter".
-  */
-  _dartEditorHandler(HttpRequest request, HttpResponse response){
-    _fileResponse(request, response, "$_sdkPath${request.path}");
-  }
-
-  /**
-  * Règle de matching pour les requêtes de test commençant par /test/packages/
-  */
-  bool _packagesMatcher(HttpRequest request){
-    return request.path.startsWith("$_PACKAGES_PATH_PREFIX/");
-  }
-
-  /**
-  * Traitement des requêtes de test pour les packages.
-  */
-  _packagesHandler(HttpRequest request, HttpResponse response){
-    var path = request.path.substring(_PACKAGES_PATH_PREFIX.length);
-    _fileResponse(request, response, "$_packagesPath$path");
-  }
-
-  /**
   * Renvoit les données du fichier passé en paramétre
   */
   _fileResponse(HttpRequest request, HttpResponse response, String filePath){
@@ -146,7 +106,7 @@ class PaporiServer {
 
       // Recherche d'une page index si l'url se termine par un /
       if(filePath.endsWith('/')){
-        var filesIterator = _indexFiles.map((indexFile) => new File("$filePath$indexFile")).filter((file) => file.existsSync()).iterator();
+        var filesIterator = indexFiles.map((indexFile) => new File("$filePath$indexFile")).filter((file) => file.existsSync()).iterator();
         if(filesIterator.hasNext()){
           requestedFile = filesIterator.next();
         }
@@ -237,9 +197,4 @@ class PaporiServer {
     "HEADERS : \n${response.headers}\n"
     "------------------------------------\n");
   }
-
-  set twitterApiUrl(String value) => _twitterApiUrl = value;
-  set twitterApiPort(int value) => _twitterApiPort = value;
-  set sdkPath(String value) => _sdkPath = value;
-  set packagesPath(String value) => _packagesPath = value;
 }
