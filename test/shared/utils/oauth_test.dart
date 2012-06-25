@@ -7,7 +7,7 @@
 
 
 #import('../../../src/shared/utils/oauth.dart');
-#import('../../../src/shared/utils/base_64.dart');
+#import('../../../src/shared/utils/base64.dart');
 
 class OAuthTest implements Runnable {
   run() {
