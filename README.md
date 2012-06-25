@@ -49,16 +49,18 @@ Set the DART_SDK variable to the dart SDK path (add a line to ~/.pam_environment
 
 Then change the current directory, to the project folder : 
 > 	cd ~/dart/papori
+
 And retrieve external packages, using the package manager : 
 > 	$DART_SDK/bin/pub install --sdkdir=$DART_SDK
 
-In the dart Editor, set the packages directory : "Tools" > "Preferences" > "Editor" and in "Package directory" browse to ~/dart/papori/packages/
+In the dart Editor, set the packages directory : "Tools" > "Preferences" > "Editor" and in "Package directory" browse to ~/dart/papori/packages/. **Don't forget the last slash !**
 
 Run the application
 ------------------------------------------------
 
-First, run the server : right click on server.dart file, and select "Run". 
-Then open dartium : right click on Papori.html file, and select "Run". Change the url to http://localhost:8080.
+1. run the server : right click on server.dart file, and select "Run". 
+2. open dartium : right click on Papori.html file, and select "Run". 
+3. change the url to http://localhost:8080.
 
 Development Tools
 =================
@@ -66,11 +68,11 @@ Development Tools
 Use pub : the Dart Package Manager
 ------------------------------------------------
 Open a terminal, and change the current directory to the papori project directory, ~/dart/papori.
-> 	$DART_SDK/bin/pub install --sdkdir=$DART_SDK/dart-sdk/ is in your environnement path
+> 	$DART_SDK/bin/pub install --sdkdir=$DART_SDK
 
 Generate Dart code from Template
 ------------------------------------------------
-Pre-requises :
+Prerequisites :
 
 - having SVN installed
 - having dart SDK installed (we assume next that {dart-sdk} folder is where it is installed)
@@ -91,6 +93,7 @@ Compilation :
 4. The dart file will be generated in the same folder.
 
 Useful link :
+
 * http://blog.sethladd.com/2012/03/first-look-at-darts-html-template.html
 * http://blog.sethladd.com/2012/03/dart-templates-now-allow-nesting.html
 * http://japhr.blogspot.fr/2012/03/dart-templates-bleeding-edge.html
