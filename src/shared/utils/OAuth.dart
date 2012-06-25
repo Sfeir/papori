@@ -16,8 +16,8 @@ class OAuth {
 //  static int randomInt() {
 //    return (Math.random() * (1 << 32)).toInt() ^ new Date.now().value;
 //  }
-//  
-//  
+//
+//
 //  static List<int> _intToBytes(int value) {
 //    var result = [];
 //    while(value != 0){
@@ -31,22 +31,22 @@ class OAuth {
 //    new List((number / 4).ceil().toInt()).forEach(f);
 //    return [].;
 //  }
-  
-  /** Retourne 32 bytes aléatoires encodé en base 64 */  
+
+  /** Retourne 32 bytes aléatoires encodé en base 64 */
   static String getNonce(){
     // TODO : l'aléatoire peut être optimisé
-    return Base64.encode(new List(32).map((e)=> ((Math.random() * 256) + 1).toInt() ^ new Date.now().value));
+    return Base64.encode(new List(32).map((e)=> ((Math.random() * 256) + 1).toInt() ^ new Date.now().millisecondsSinceEpoch));
   }
-  
+
   /** Construit la signature de base pour une requête. */
   static String buildRawBaseSignature(String method, Uri url, [Map<String, String> oauthParameters, Map<String, List<String>> parameters]){
     // https://dev.twitter.com/docs/auth/creating-signature
-    
+
     StringBuffer result = new StringBuffer();
     // HTTP Method to uppercase
     result.add(method.toUpperCase());
     result.add('&');
-    
+
     // Encoded base URL
     Uri baseUrl = new Uri(url.scheme.toLowerCase(), url.userInfo, url.domain.toLowerCase(), url.port, url.path);
     result.add(encodeUriComponent(baseUrl.toString()));
@@ -64,29 +64,29 @@ class OAuth {
     }
 
     result.add(encodeUriComponent(_concatSignatureParameters(paramsMap)));
-    
+
     return result.toString();
   }
- 
+
   /** Concatene les parametres de la signature. */
   static String _concatSignatureParameters(Map<String, List<String>> parameters){
     // TODO : use TreeMap when implemenented
     Map<String, List<String>> paramsMap = new Map();
     // Deep copy
-    parameters.forEach((key, values) { 
+    parameters.forEach((key, values) {
       paramsMap[key] = new List.from(values);
       paramsMap[key].sort(Comparison.asc);
     });
-    
+
     List<String> keys = new List.from(paramsMap.getKeys());
     keys.sort(Comparison.asc);
-    
+
     List<String> params = [];
     keys.map((key) => paramsMap[key].forEach((value) => params.add(encodeKeyValueParameter(key, value))));
-    
+
     return Strings.join(params, '&');
   }
-  
+
   /** Hash la signature [baseSignature] avec la méthode HMAC-SHA1, la [consumerSecret] et le [tokenSecret] d'authentification si présent. */
   static String hashSignature(String baseSignature, String consumerSecret, [String tokenSecret = '']) {
     String signingKey = "${encodeUriComponent('$consumerSecret')}&${encodeUriComponent('$tokenSecret')}";
@@ -94,7 +94,7 @@ class OAuth {
     hmac.update(encodeUtf8(baseSignature));
     return Base64.encode(hmac.digest());
   }
-  
+
   /** Concatène les parametres OAuth, pour l'entete HTTP Authorization. */
   static String concatOAuthParameters(Map<String, String> oauthParameters) {
     List<String> params = [];
@@ -104,7 +104,7 @@ class OAuth {
     result.add(Strings.join(params, ', '));
     return result.toString();
   }
-  
+
   static String encodeKeyValueParameter(String key, [String value]){
     return value == null ? encodeUriComponent(key) : "${encodeUriComponent(key)}=${encodeUriComponent(value)}";
   }

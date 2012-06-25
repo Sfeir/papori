@@ -1,10 +1,10 @@
 #library('JsonParserTest');
 
+#import('package:unittest/unittest.dart');
 #import('package:dartwatch-JsonObject/JsonObject.dart');
-#import('../../../../../dart-editor/dart-sdk/lib/unittest/unittest.dart');
 
 class JsonParserTest {
-  
+
   var jsonSample = '''
       [
       {
@@ -104,13 +104,13 @@ class JsonParserTest {
       }
       ]
 ''';
-  
+
   run() {
     test('Json Parsing', () {
-      JsonObject result = new JsonObject.fromJsonString(jsonSample);
+      JsonObject result = new JsonObject.fromJsonString('');
       expect(result[0].id, equals(211056200366833660));
       expect(result[0].user.name, equals("LAU Thierry"));
       expect(result[0].entities.hashtags[0].text, equals("git"));
     });
+  }
 }
-}  

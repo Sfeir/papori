@@ -1,17 +1,18 @@
 #library('utils');
 
 #import('dart:uri');
-#import('../../../../../dart-editor/dart-sdk/lib/unittest/unittest.dart');
+#import('package:unittest/unittest.dart');
 #import('../../Runnable.dart');
+
 #import('../../../src/shared/utils/Uris.dart');
 
 class UrisTest implements Runnable {
   run(){
     test('parseQuery', () {
       String query = '?a=b&a%20b=i%20j&&&null&empty=&a=c&&';
-      
+
       Map<String, List<String>> output = Uris.parseQuery(query);
-      
+
       // FIX : l'égalité des map n'est pas implémenté
 //      Map<String, List<String>> expected = {
 //                                            'a' : ['b', 'c'],
@@ -29,9 +30,9 @@ class UrisTest implements Runnable {
 
     test('parseEmptyQuery', () {
       String query = '';
-      
+
       Map<String, List<String>> output = Uris.parseQuery(query);
-      
+
       expect(output.isEmpty());
     });
   }
