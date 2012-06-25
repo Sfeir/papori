@@ -13,8 +13,6 @@ main() {
   _logger.info("Starting $servername server on $host:$port ...");
   _logger.info("Root directory: root");
   var server = new PaporiServer.get(host, port, root);
-  server.sdkPath = "../..";
-  server.packagesPath = "./packages";
   server.start();
   _logger.info("$servername server is running on : http://$host:$port");
 }
