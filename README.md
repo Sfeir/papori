@@ -44,13 +44,13 @@ Open a terminal, and change the current directory to the workspace directory, "d
 Configure your environnement
 ------------------------------------------------
 
-Set the DART_SDK variable to the dart SDK path :
+Set the DART_SDK variable to the dart SDK path (add a line to ~/.pam_environment) :
 > 	DART_SDK=~/dart-editor/dart-sdk
 
 Then change the current directory, to the project folder : 
 > 	cd ~/dart/papori
 And retrieve external packages, using the package manager : 
-> 	$DART_SDK/bin/pub install
+> 	$DART_SDK/bin/pub install --sdkdir=$DART_SDK
 
 In the dart Editor, set the packages directory : "Tools" > "Preferences" > "Editor" and in "Package directory" browse to ~/dart/papori/packages/
 
@@ -63,6 +63,11 @@ Then open dartium : right click on Papori.html file, and select "Run". Change th
 Development Tools
 =================
 
+Use pub : the Dart Package Manager
+------------------------------------------------
+Open a terminal, and change the current directory to the papori project directory, ~/dart/papori.
+> 	$DART_SDK/bin/pub install --sdkdir=$DART_SDK/dart-sdk/ is in your environnement path
+
 Generate Dart code from Template
 ------------------------------------------------
 Pre-requises :
@@ -73,10 +78,10 @@ Pre-requises :
 Preparation :
 
 1. Run <code>svn checkout http://dart.googlecode.com/svn/branches/bleeding_edge/dart/utils</code> in the {dart-sdk}/lib folder
-2. Make sure that {dart-sdk}/bin is in your environnement path
-	For Ubuntu user, goto ~/Home/.profile (hidden file) end add the following lines at the end of the file : <code>PATH="$PATH:$HOME/Work/tools/dart-editor/dart-sdk/bin"</code>
-3. Make sure that {dart-sdk}/lib/utils/template is in your environnement path
-	For Ubuntu user, goto ~/Home/.profile (hidden file) end add the following lines at the end of the file : <code>PATH="$PATH:$HOME/Work/tools/dart-editor/dart-sdk/lib/utils/template"</code>
+2. Make sure that $DART_SDK/bin is in your environnement path
+	For Ubuntu user, goto ~/.pam_environment (hidden file) and add the following lines at the end of the file : <code>PATH="$DART_SDK/bin:$PATH"</code>
+3. Make sure that $DART_SDK/lib/utils/template is in your environnement path
+	For Ubuntu user, goto ~/.pam_environment (hidden file) and add the following lines at the end of the file : <code>PATH="$DART_SDK/lib/utils/template:$PATH"</code>
 
 Compilation :
 
@@ -89,12 +94,6 @@ Useful link :
 * http://blog.sethladd.com/2012/03/first-look-at-darts-html-template.html
 * http://blog.sethladd.com/2012/03/dart-templates-now-allow-nesting.html
 * http://japhr.blogspot.fr/2012/03/dart-templates-bleeding-edge.html
-
-
-Use pub : the Dart Package Manager
-------------------------------------------------
-Open a terminal, and change the current directory to the papori project directory, ~/dart/papori.
-> 	$DART_SDK/bin/pub install is in your environnement path
 
 
 Useful links :
