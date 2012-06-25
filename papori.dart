@@ -1,8 +1,8 @@
 #import('dart:html');
-#import('src/client/adapter/TwitterAdapter.dart');
+#import('src/client/adapter/twitter_adapter.dart');
 #import('package:log4dart/lib.dart');
-#import('src/shared/data/UserToFollow.dart');
-#import('src/shared/data/Error.dart');
+#import('src/shared/data/user_to_follow.dart');
+#import('src/shared/data/error.dart');
 #source('src/client/template/Errors.dart');
 #source('src/client/template/Alert.dart');
 #source('src/client/template/Dashboard.dart');
