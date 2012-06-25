@@ -1,5 +1,5 @@
 #import('dart:io');
-#import("./src/server/PaporiServer.dart");
+#import("./src/server/papori_server.dart");
 #import('package:log4dart/lib.dart');
 
 main() {

@@ -1,11 +1,11 @@
 #library('adapter');
 
 #import('package:unittest/unittest.dart');
-#import('../../../test/Runnable.dart');
+#import('../../../test/runnable.dart');
 
 #import('dart:html');
 
-#import('../../../src/client/adapter/TwitterAdapter.dart');
+#import('../../../src/client/adapter/twitter_adapter.dart');
 
 class TwitterAdapterTest implements Runnable {
   run() {

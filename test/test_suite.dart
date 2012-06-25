@@ -4,13 +4,13 @@
 #import('package:unittest/unittest.dart');
 #import('package:unittest/html_config.dart');
 #import('package:unittest/html_enhanced_config.dart');
-#import('./Runnable.dart');
+#import('./runnable.dart');
 
-#import('./client/adapter/TwitterAdapterTest.dart');
-#import('./shared/parser/JsonParserTest.dart');
-#import('./client/utils/XMLHttpRequestsTest.dart');
-#import('./shared/utils/UrisTest.dart');
-#import('./shared/utils/OAuthTest.dart');
+#import('./client/adapter/twitter_adapter_test.dart');
+#import('./shared/parser/json_parser_test.dart');
+#import('./client/utils/xml_http_requests_test.dart');
+#import('./shared/utils/uris_test.dart');
+#import('./shared/utils/oauth_test.dart');
 
 /**
 * Run the tests suite
@@ -21,7 +21,7 @@ class TestSuite {
   TestSuite() : _tests = {
                           'TwitterAdapterTest' : new TwitterAdapterTest(),
                           // FIXME : corriger ce test
-//                          'JsonParserTest' : new JsonParserTest(),
+                          'JsonParserTest' : new JsonParserTest(),
                           'UrisTest' : new UrisTest(),
                           'OAuthTest' : new OAuthTest(),
   };

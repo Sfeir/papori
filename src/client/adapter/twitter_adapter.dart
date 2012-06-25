@@ -5,11 +5,11 @@
 #import('dart:uri');
 #import('package:log4dart/lib.dart');
 
-#import('../../../src/client/utils/XMLHttpRequests.dart');
-#import('../../../src/shared/utils/OAuth.dart');
-#import('../../../src/shared/utils/Uris.dart');
+#import('../../../src/client/utils/xml_http_requests.dart');
+#import('../../../src/shared/utils/oauth.dart');
+#import('../../../src/shared/utils/uris.dart');
 
-#import('../../../src/shared/data/UserToFollow.dart');
+#import('../../../src/shared/data/user_to_follow.dart');
 
 /**
 * Adapter for Twitter REST API.

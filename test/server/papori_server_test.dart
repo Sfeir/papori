@@ -1,8 +1,8 @@
 #library('server');
 
 #import('package:unittest/unittest.dart');
-#import('../Runnable.dart');
-#import('../../src/server/PaporiServer.dart');
+#import('../runnable.dart');
+#import('../../src/server/papori_server.dart');
 //#import('dart:io');
 
 class PaporiServerTest implements Runnable {
