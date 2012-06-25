@@ -1,6 +1,6 @@
 #import('dart:html');
 #import('src/client/adapter/TwitterAdapter.dart');
-#import('package:log4dart/Lib.dart');
+#import('package:log4dart/lib.dart');
 #import('src/shared/data/UserToFollow.dart');
 #import('src/shared/data/Error.dart');
 #source('src/client/template/Errors.dart');
@@ -10,9 +10,9 @@
 
 class Papori {
   final Logger _logger;
-  
+
   Papori() : _logger = LoggerFactory.getLogger("Papori");
-  
+
   void display(){
     _displayDartStatus();
     _displayFollowBlock();
@@ -21,19 +21,19 @@ class Papori {
     _displayDashboard();
     _displayListErrors();
   }
-  
+
   void _displayDartStatus() {
     document.query('#status').innerHTML = "Papori <span class=\"label label-success\">Dart is running</span>";
   }
-  
+
   _checkForNewTwitterActivities(){
     var url = "http://${window.location.host}/papori/";
-    
+
     var request = new XMLHttpRequest.get(url, onRequestSuccess(XMLHttpRequest req) {
       _displayAlert("Papori result", req.responseText, "alert-success");
     });
   }
-  
+
 	/**
 	 * Display an alert Popup
 	 * @param header alert header
@@ -43,7 +43,7 @@ class Papori {
 	void _displayAlert(String header, String message, String alertType){
 	  // Instantiation du widget Alert
 	  Alert alert = new Alert(header, message, alertType);
-	  
+
 	  // Ajout du widget Alert dans l'élément d'id container
 	  var alertElement = new Element.html(alert.root.outerHTML);
 	  document.query("#container").elements.add(alertElement);
@@ -54,7 +54,7 @@ class Papori {
 	   var dashboardElement = new Element.html(dashboard.root.outerHTML);
 	   document.query("#container").elements.add(dashboardElement);
 	}
-		
+
 	void _displayListErrors(){
 	  Error error = new Error();
 	  error.title = "NullPointerException";
@@ -69,7 +69,7 @@ Java Result: 1""";
 	  var dashboardElement = new Element.html(errorsWidget.root.outerHTML);
     document.query("#container").elements.add(dashboardElement);
 	}
-  
+
   void _displayTwitterTestButton(){
     // Ajout d'un bouton de test Twitter
     var button = new ButtonElement();
@@ -84,7 +84,7 @@ Java Result: 1""";
     });
     document.query("#content").elements.add(button);
   }
-  
+
   void _displayPaporiTestButton(){
     // Ajout d'un bouton de test Twitter
     var button = new ButtonElement();
@@ -102,12 +102,12 @@ Java Result: 1""";
         button.attributes['class'] = "btn btn-success";
         window.clearInterval(intervalConsumerId);
       }
-      
+
     });
     document.query("#content").elements.add(button);
-    
+
   }
-  
+
   void _displayFollowBlock(){
     DivElement form = new DivElement();
     form.attributes['class'] = "well form-search";
@@ -133,16 +133,16 @@ Java Result: 1""";
     });
     form.elements.add(searchField);
     form.elements.add(followButton);
-    
+
     document.query("#container").elements.add(form);
   }
-  
+
   void _addUserToFollowInDashboard(UserToFollow user){
     DashboardItem dashboardElement = new DashboardItem(user);
     var dashboardItemElement = new Element.html(dashboardElement.root.outerHTML);
     document.query("#dashboard-body").elements.add(dashboardItemElement);
   }
-  
+
 }
 
 void main() {

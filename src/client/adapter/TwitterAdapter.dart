@@ -3,7 +3,7 @@
 #import('dart:html');
 #import('dart:json');
 #import('dart:uri');
-#import('package:log4dart/Lib.dart');
+#import('package:log4dart/lib.dart');
 
 #import('../../../src/client/utils/XMLHttpRequests.dart');
 #import('../../../src/shared/utils/OAuth.dart');
@@ -16,7 +16,7 @@
 */
 class TwitterAdapter {
   final Logger _logger;
-  
+
   String twitterApiUrl = 'http://api.twitter.com';
   String proxyUrl = 'https://api.twitter.com';
   String consumerKey = 'zxye2O5CZiVaT507MGplGw';
@@ -26,33 +26,33 @@ class TwitterAdapter {
   String accessTokenSecret;
 
   String authToken = '';
-  
+
   static final String _TEST_URL =  '/1/help/test.json';
   static final String _REQUEST_TOKEN_URL =  '/oauth/request_token';
-  
+
   TwitterAdapter() : _logger = LoggerFactory.getLogger("TwitterAdapter");
-  
+
   /**
   * Test the connection with twitter.
   * See https://dev.twitter.com/docs/api/1/get/help/test
   */
   Future<bool> testConnection() {
     Completer<bool> result = new Completer();
-    
-    var url = "$proxyUrl$_TEST_URL"; 
 
-    // call the web server asynchronously 
-    XMLHttpRequests.getXMLHttpRequest(url, 
+    var url = "$proxyUrl$_TEST_URL";
+
+    // call the web server asynchronously
+    XMLHttpRequests.getXMLHttpRequest(url,
       onSuccess : (XMLHttpRequest req) {
         result.complete(req.responseText == '"ok"');
-      }, 
+      },
       onFail : (XMLHttpRequest req) {
         result.complete(false);
       });
-    
+
     return result.future;
   }
-  
+
   /**
   * Obtient un token d'autorisation.
   *
@@ -64,23 +64,23 @@ class TwitterAdapter {
                                            'oauth_nonce' : OAuth.getNonce(),
                                            'oauth_callback' : callbackUrl,
                                            'oauth_signature_method' : 'HMAC-SHA1',
-                                           'oauth_timestamp' : (new Date.now().value / 1000).toInt().toString(),
+                                           'oauth_timestamp' : (new Date.now().millisecondsSinceEpoch / 1000).toInt().toString(),
                                            'oauth_consumer_key' : consumerKey,
 //                                           'oauth_token' : accessToken,
                                            'oauth_version' : '1.0',
     };
-    
+
     String method = 'POST';
-    var url = "$proxyUrl$_REQUEST_TOKEN_URL"; 
-    var twitterUrl = new Uri.fromString("$twitterApiUrl$_REQUEST_TOKEN_URL"); 
+    var url = "$proxyUrl$_REQUEST_TOKEN_URL";
+    var twitterUrl = new Uri.fromString("$twitterApiUrl$_REQUEST_TOKEN_URL");
 
     var baseSignature = OAuth.buildRawBaseSignature(method, twitterUrl, oauthParameters);
     oauthParameters['oauth_signature'] = OAuth.hashSignature(baseSignature, consumerSecret);
 
     Completer<Map<String, List<String>>> result = new Completer();
 
-    // call the web server asynchronously 
-    XMLHttpRequests.postXMLHttpRequest(url, headers : { 'Authorization' : [OAuth.concatOAuthParameters(oauthParameters)] }, 
+    // call the web server asynchronously
+    XMLHttpRequests.postXMLHttpRequest(url, headers : { 'Authorization' : [OAuth.concatOAuthParameters(oauthParameters)] },
       onSuccess : (XMLHttpRequest req) {
         _logger.debug(req.responseText);
         result.complete(Uris.parseFormUrlEncoded(req.responseText));
@@ -88,7 +88,7 @@ class TwitterAdapter {
       onFail : (XMLHttpRequest req) {
         result.completeException(new Exception(req.responseText));
       });
-    
+
     return result.future;
   }
 }

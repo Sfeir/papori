@@ -3,7 +3,7 @@
 #import('dart:io');
 #import('dart:uri');
 #import('dart:json');
-#import('package:log4dart/Lib.dart');
+#import('package:log4dart/lib.dart');
 
 /**
 * Serveur simple pour l'application.
@@ -13,12 +13,12 @@
 */
 class PaporiServer {
   final Logger _logger;
-  
+
   static final String _TWEETER_PATH_PREFIX = '/twitter';
   static final String _PAPORI_PATH_PREFIX = '/papori';
   static final String _DART_EDITOR_PATH_PREFIX = '/dart-editor';
   static final String _PACKAGES_PATH_PREFIX = '/test/packages';
-  
+
   HttpServer _server;
   String _host;
   int _port;
@@ -28,20 +28,20 @@ class PaporiServer {
   String _twitterApiUrl = 'api.twitter.com';
   int _twitterApiPort = 80;
   List<String> _indexFiles = const ['index.html'];
-  
+
   PaporiServer() : _logger = LoggerFactory.getLogger("PaporiServer");
-  
-  PaporiServer.get(String host, int port, [String rootPath = '.']) 
-  : 
+
+  PaporiServer.get(String host, int port, [String rootPath = '.'])
+  :
     _logger = LoggerFactory.getLogger("PaporiServer"),
-    _server = new HttpServer(), 
-    this._host = host, 
-    this._port = port, 
+    _server = new HttpServer(),
+    this._host = host,
+    this._port = port,
     this._rootPath = rootPath,
     this._sdkPath = '.'
   {
   }
-  
+
   /**
   * Lance le serveur.
   */
@@ -53,28 +53,28 @@ class PaporiServer {
     _server.addRequestHandler(_dartEditorMatcher, _dartEditorHandler);
     _server.addRequestHandler(_packagesMatcher, _packagesHandler);
   }
-  
+
   /**
   * Stop le serveur.
   */
   stop(){
     _server.close();
   }
-  
+
   /**
   * Récupére les fichiers locaux, retourne une erreur 404 si inexistant, 500 si erreur
   */
   _staticResquestHandler(HttpRequest request, HttpResponse response) {
     _fileResponse(request, response, "$_rootPath${request.path}");
   }
-  
+
   /**
   * Règle de matching pour les requêtes "Twitter" commençant par /twitter/
   */
   bool _twitterMatcher(HttpRequest request){
     return request.path.startsWith("$_TWEETER_PATH_PREFIX/");
   }
-  
+
   /**
   * Traitement des requêtes "Twitter".
   */
@@ -82,20 +82,20 @@ class PaporiServer {
     _exceptionHandler(request, response, () {
       var path = request.path.substring(_TWEETER_PATH_PREFIX.length);
       _logger.info("${request.method} - http://$_twitterApiUrl$path");
-  
+
       HttpClientConnection client = new HttpClient().open(request.method, _twitterApiUrl, _twitterApiPort, path);
       _proxify(request, response, client);
     });
   }
-  
+
   /*****************************************************
    *          PAPORI MATCHER & HANDLER                 *
    *****************************************************/
-  
+
   bool _paporiMatcher(HttpRequest request){
     return request.path.startsWith("$_PAPORI_PATH_PREFIX/");
   }
-  
+
   _paporiHandler(HttpRequest request, HttpResponse response){
     _exceptionHandler(request, response, () {
       Map data = new Map(); // create a map for the response
@@ -107,28 +107,28 @@ class PaporiServer {
       _logger.info("${response.statusCode} - ${request.path}}");
     });
   }
-  
+
   /**
   * Règle de matching pour les requêtes de test commençant par /dart-editor/
   */
   bool _dartEditorMatcher(HttpRequest request){
     return request.path.startsWith("$_DART_EDITOR_PATH_PREFIX/");
   }
-  
+
   /**
   * Traitement des requêtes "Twitter".
   */
   _dartEditorHandler(HttpRequest request, HttpResponse response){
     _fileResponse(request, response, "$_sdkPath${request.path}");
   }
-  
+
   /**
   * Règle de matching pour les requêtes de test commençant par /test/packages/
   */
   bool _packagesMatcher(HttpRequest request){
     return request.path.startsWith("$_PACKAGES_PATH_PREFIX/");
   }
-  
+
   /**
   * Traitement des requêtes de test pour les packages.
   */
@@ -136,7 +136,7 @@ class PaporiServer {
     var path = request.path.substring(_PACKAGES_PATH_PREFIX.length);
     _fileResponse(request, response, "$_packagesPath$path");
   }
-  
+
   /**
   * Renvoit les données du fichier passé en paramétre
   */
@@ -179,7 +179,7 @@ class PaporiServer {
       response.outputStream.close();
     }
   }
-  
+
   /**
   * Redirige la requête vers une connexion ouverte et redirige la réponse de celle-ci
   */
@@ -187,10 +187,10 @@ class PaporiServer {
     client.onRequest = (HttpClientRequest clientRequest) {
 
       _logHttpRequest("request", request);
-      
-      request.headers.forEach((String name, List<String> values) => 
-          'host' != name.toLowerCase() ?  
-              values.forEach((value) => clientRequest.headers.add(name, value)) 
+
+      request.headers.forEach((String name, List<String> values) =>
+          'host' != name.toLowerCase() ?
+              values.forEach((value) => clientRequest.headers.add(name, value))
               : null);
       clientRequest.contentLength = request.contentLength;
 
@@ -205,12 +205,12 @@ class PaporiServer {
     client.onResponse = (HttpClientResponse clientResponse){
       _exceptionHandler(request, response, () {
         _logHttpResponse("clientResponse", clientResponse);
-        
+
         clientResponse.headers.forEach((String name, List<String> values) => values.forEach((value) => response.headers.add(name, value)));
         response.contentLength = clientResponse.contentLength;
         response.reasonPhrase = clientResponse.reasonPhrase;
         response.statusCode = clientResponse.statusCode;
-    
+
         _logHttpResponse("response", response);
 
         if(clientResponse.contentLength > 0) {
@@ -221,14 +221,14 @@ class PaporiServer {
       });
     };
   }
-  
+
   _logHttpRequest(String name, request){
     _logger.debug("\n------------- $name ----------------\n"
       "contentLength : ${request.contentLength}\n"
     "HEADERS : \n${request.headers}\n"
     "------------------------------------\n");
   }
-  
+
   _logHttpResponse(String name, response){
     _logger.debug("\n------------- $name ----------------\n"
       "statusCode : ${response.statusCode}\n"
@@ -237,7 +237,7 @@ class PaporiServer {
     "HEADERS : \n${response.headers}\n"
     "------------------------------------\n");
   }
-  
+
   set twitterApiUrl(String value) => _twitterApiUrl = value;
   set twitterApiPort(int value) => _twitterApiPort = value;
   set sdkPath(String value) => _sdkPath = value;
